@@ -11,4 +11,4 @@ cypress/downloads
 cypress/screenshots
 .env
 pnpm-lock.yaml
-
+components.d.ts
