@@ -1,5 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import axios from 'axios'
+import type { IUser } from '../types'
 
 export const useUserStore = defineStore('user', () => {
   const savedName = ref('')
@@ -7,6 +8,7 @@ export const useUserStore = defineStore('user', () => {
   const api_url = import.meta.env.VITE_API_URL
   const usedNames = computed(() => Array.from(previousNames.value))
   const otherNames = computed(() => usedNames.value.filter(name => name !== savedName.value))
+  const user = ref<IUser | null>(null)
 
   function setNewName(name: string) {
     if (savedName.value)
@@ -21,10 +23,9 @@ export const useUserStore = defineStore('user', () => {
         User_password,
       }, {
         headers: { 'Content-Type': 'application/json' },
-      },
-      ).then((response) => {
-        // put the token in the local storage
-        localStorage.setItem('token', response.data.token)
+        withCredentials: true,
+      }).then((response) => {
+        user.value = response.data as IUser
       })
     }
     catch (error) {
@@ -41,13 +42,9 @@ export const useUserStore = defineStore('user', () => {
         User_name,
         User_email,
         User_password,
-        PGP_PublicKey: 'test',
       }, {
         headers: { 'Content-Type': 'application/json' },
-      },
-      ).then((response) => {
-        // put the token in the local storage
-        localStorage.setItem('token', response.data.token)
+        withCredentials: true,
       })
     }
     catch (error) {
@@ -59,6 +56,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   return {
+    user,
     setNewName,
     otherNames,
     savedName,
