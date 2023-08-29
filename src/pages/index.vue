@@ -15,20 +15,17 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <div>
+  <div class="flex flex-col items-center gap-3">
     <div text-4xl>
       <div i-carbon-campsite inline-block />
     </div>
     <p>
-      <a rel="noreferrer" href="https://github.com/antfu/vitesse" target="_blank">
-        Vitesse
+      <a rel="noreferrer" href="https://github.com/sebastienpingal/cerberes_front_end" target="_blank">
+        Cerberes
       </a>
     </p>
     <TheLogin />
-    <p>
-      <em text-sm opacity-75>{{ t('intro.desc') }}</em>
-    </p>
-
+    <TheRegister />
     <TheInput v-model="name" :placeholder="t('intro.whats-your-name')" autocomplete="false" @keydown.enter="go" />
     <label class="hidden" for="input">{{ t('intro.whats-your-name') }}</label>
 
