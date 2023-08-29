@@ -28,13 +28,42 @@ export const useUserStore = defineStore('user', () => {
       })
     }
     catch (error) {
+      if (axios.isAxiosError(error))
+        throw new Error(error.response?.data)
+      else
+        console.error(error)
     }
   }
+
+  async function register(User_name: string, User_email: string, User_password: string) {
+    try {
+      await axios.post(`${api_url}/auth/register`, {
+        User_name,
+        User_email,
+        User_password,
+        PGP_PublicKey: 'test',
+      }, {
+        headers: { 'Content-Type': 'application/json' },
+      },
+      ).then((response) => {
+        // put the token in the local storage
+        localStorage.setItem('token', response.data.token)
+      })
+    }
+    catch (error) {
+      if (axios.isAxiosError(error))
+        throw new Error(error.response?.data)
+      else
+        console.error(error)
+    }
+  }
+
   return {
     setNewName,
     otherNames,
     savedName,
     login,
+    register,
   }
 })
 
