@@ -31,6 +31,13 @@ async function register() {
     })
     return
   }
+  if (!/[A-Z]/.test(password.value)) {
+    OMessage({
+      content: 'Password must contain at least one uppercase letter',
+      type: 'warning',
+    })
+    return
+  }
   if (name.value.length < 1) {
     OMessage({
       content: 'You must enter a name',
