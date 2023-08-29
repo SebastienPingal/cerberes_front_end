@@ -1,14 +1,20 @@
 <script setup lang="ts">
+import axios from 'axios'
+
 defineOptions({
   name: 'IndexPage',
 })
 const user = useUserStore()
 const name = ref(user.savedName)
+const api_url = import.meta.env.VITE_API_URL
 
 const router = useRouter()
 function go() {
   if (name.value)
     router.push(`/hi/${encodeURIComponent(name.value)}`)
+}
+async function me() {
+  await axios.get(`${api_url}/users/me`, { withCredentials: true })
 }
 
 const { t } = useI18n()
@@ -26,6 +32,9 @@ const { t } = useI18n()
     </p>
     <TheLogin />
     <TheRegister />
+    <o-button @click="me">
+      Me
+    </o-button>
     <TheInput v-model="name" :placeholder="t('intro.whats-your-name')" autocomplete="false" @keydown.enter="go" />
     <label class="hidden" for="input">{{ t('intro.whats-your-name') }}</label>
 
