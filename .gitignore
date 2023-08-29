@@ -8,3 +8,7 @@ node_modules
 .idea/
 *.log
 cypress/downloads
+cypress/screenshots
+.env
+pnpm-lock.yaml
+
