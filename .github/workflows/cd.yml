@@ -43,6 +43,6 @@ jobs:
             set -e
             cd Documents/PROG/cerberes/front_end
             tar -xzvf package.tar.gz
-            npm install
+            npm install --verbose
             cd
             pm2 start pm2.config.js
