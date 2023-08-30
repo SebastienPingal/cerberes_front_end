@@ -3,18 +3,13 @@ import axios from 'axios'
 import type { IUser } from '../types'
 
 export const useUserStore = defineStore('user', () => {
-  const savedName = ref('')
-  const previousNames = ref(new Set<string>())
   const api_url = import.meta.env.VITE_API_URL
-  const usedNames = computed(() => Array.from(previousNames.value))
-  const otherNames = computed(() => usedNames.value.filter(name => name !== savedName.value))
-  const user = ref<IUser | null>(null)
-
-  function setNewName(name: string) {
-    if (savedName.value)
-      previousNames.value.add(savedName.value)
-    savedName.value = name
-  }
+  const user = ref(useStorage('curent_user', <IUser | null>null, undefined, {
+    serializer: {
+      read: (v: any) => v ? JSON.parse(v) : null,
+      write: (v: any) => JSON.stringify(v),
+    },
+  }))
 
   async function login(User_email: string, User_password: string) {
     try {
@@ -45,6 +40,8 @@ export const useUserStore = defineStore('user', () => {
       }, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
+      }).then((response) => {
+        user.value = response.data as IUser
       })
     }
     catch (error) {
@@ -57,9 +54,6 @@ export const useUserStore = defineStore('user', () => {
 
   return {
     user,
-    setNewName,
-    otherNames,
-    savedName,
     login,
     register,
   }
