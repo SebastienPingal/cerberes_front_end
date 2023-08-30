@@ -2,12 +2,14 @@
 import { OMessage } from 'onu-ui'
 
 const user_store = useUserStore()
+const user = computed(() => user_store.user)
 const name = ref('')
 const email = ref('')
 const password = ref('')
 const passwordConfirm = ref('')
 const displayed_error = ref('')
 const loading = ref(false)
+const display_store = useDisplayStore()
 
 async function register() {
   if (password.value.length < 8) {
@@ -38,23 +40,9 @@ async function register() {
     })
     return
   }
-  if (name.value.length < 1) {
-    OMessage({
-      content: 'You must enter a name',
-      type: 'warning',
-    })
-    return
-  }
   if (name.value.length > 64) {
     OMessage({
       content: 'Name must be at most 64 characters',
-      type: 'warning',
-    })
-    return
-  }
-  if (email.value.length < 1) {
-    OMessage({
-      content: 'You must enter an email',
       type: 'warning',
     })
     return
@@ -79,6 +67,10 @@ async function register() {
   displayed_error.value = ''
   try {
     await user_store.register(name.value, email.value, password.value)
+    OMessage({
+      content: `Welcome ${user.value?.User_name} !`,
+      type: 'success',
+    })
   }
   catch (error) {
     const typed_error = error as Error
@@ -95,16 +87,22 @@ async function register() {
 <template>
   <div class="card">
     <h1>Register</h1>
-    <div class="w-250px flex flex-col gap-2">
-      <input v-model="name" class="input" type="text" placeholder="Name">
-      <input v-model="email" class="input" type="text" placeholder="Email">
-      <input v-model="password" class="input" type="password" placeholder="Password">
-      <input v-model="passwordConfirm" class="input" type="password" placeholder="Confirm Password">
-    </div>
+    <form class="flex flex-col items-center gap-2" @submit.prevent="register">
+      <input v-model="name" required class="input" type="text" placeholder="Name">
+      <input v-model="email" required class="input" type="text" placeholder="Email">
+      <input v-model="password" required class="input" type="password" placeholder="Password">
+      <input v-model="passwordConfirm" required class="input" type="password" placeholder="Confirm Password">
 
-    <o-button :loading="loading" type="submit" class="w-250px" @click="register">
-      {{ loading ? 'Registering~~' : 'Register' }}
-    </o-button>
+      <o-button :loading="loading" type="submit" class="w-fit" @click="register">
+        {{ loading ? 'Registering~~' : 'Register' }}
+      </o-button>
+    </form>
+    <div>
+      Already have an account ?
+      <span class="cursor-pointer underline hover:underline-wavy" @click="display_store.toggle_login_register">
+        Login then !
+      </span>
+    </div>
   </div>
 </template>
 
