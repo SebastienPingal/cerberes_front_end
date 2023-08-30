@@ -2,6 +2,7 @@
   "type": "module",
   "private": true,
   "packageManager": "pnpm@8.6.7",
+  "main": "dist/index.html",
   "scripts": {
     "start": "serve -l 3333 dist",
     "build": "vite-ssg build",
