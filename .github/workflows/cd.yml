@@ -47,6 +47,6 @@ jobs:
             set -e
             cd Documents/PROG/cerberes/front_end
             tar -xzvf package.tar.gz
-            pnpm install --verbose --production
+            docker buildx build . -t cerberes_front:latest
             cd
             pm2 start pm2.config.js
