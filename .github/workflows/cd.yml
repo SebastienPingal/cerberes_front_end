@@ -47,3 +47,4 @@ jobs:
             docker buildx build . -t cerberes_front:latest
             cd
             pm2 start pm2.config.js
+          timeout-minutes: 20
