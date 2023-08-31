@@ -4,7 +4,7 @@
   "packageManager": "pnpm@8.6.7",
   "main": "dist/index.html",
   "scripts": {
-    "start": "serve dist -l 3333",
+    "start": "dotenv -e .env serve dist -l 3333",
     "build": "vite-ssg build",
     "dev": "vite --port 3333 --open",
     "lint": "eslint .",
@@ -48,6 +48,7 @@
     "cross-env": "^7.0.3",
     "cypress": "^12.17.1",
     "cypress-vite": "^1.4.1",
+    "dotenv-cli": "^7.3.0",
     "eslint": "^8.44.0",
     "eslint-plugin-cypress": "^2.13.3",
     "https-localhost": "^4.7.1",
