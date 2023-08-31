@@ -21,7 +21,7 @@ jobs:
           version: 8
 
       - name: Archive files
-        run: tar -czvf package.tar.gz
+        run: tar -czvf package.tar.gz --exclude=cypress --exclude=test .
 
       - name: Push archive to server
         uses: appleboy/scp-action@master
