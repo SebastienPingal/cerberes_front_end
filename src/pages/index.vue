@@ -13,7 +13,7 @@ const test = import.meta.env.VITE_API_URL
 <template>
   <div class="flex flex-col items-center gap-3">
     <img src="../../Derperus.png" alt="Derperus" class="w-250px" @click="router.push('/')">
-    {{ test }}
+    test {{ test }}
     <p>
       <a rel="noreferrer" href="https://github.com/sebastienpingal/cerberes_front_end" target="_blank"> Cerberes </a>
     </p>
