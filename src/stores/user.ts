@@ -4,6 +4,7 @@ import type { IUser } from '../types'
 
 export const useUserStore = defineStore('user', () => {
   const api_url = import.meta.env.VITE_API_URL
+
   const user = ref(useStorage('curent_user', <IUser | null>null, undefined, {
     serializer: {
       read: (v: any) => v ? JSON.parse(v) : null,

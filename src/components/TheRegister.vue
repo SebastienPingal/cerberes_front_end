@@ -93,7 +93,7 @@ async function register() {
       <input v-model="password" required class="input" type="password" placeholder="Password">
       <input v-model="passwordConfirm" required class="input" type="password" placeholder="Confirm Password">
 
-      <o-button :loading="loading" type="submit" class="w-fit" @click="register">
+      <o-button :loading="loading" type="submit" class="w-fit">
         {{ loading ? 'Registering~~' : 'Register' }}
       </o-button>
     </form>
