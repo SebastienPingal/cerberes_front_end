@@ -2,10 +2,15 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import nacl from 'tweetnacl'
 
 export const useEncryptionStore = defineStore('encryption', () => {
-  const keypair: Ref<nacl.SignKeyPair | null> = ref(null)
+  const signing_keypair: Ref<nacl.SignKeyPair | null> = ref(null)
+  const encryption_keypair: Ref<nacl.BoxKeyPair | null> = ref(null)
 
-  function setKeypair(new_keypair: nacl.SignKeyPair) {
-    keypair.value = new_keypair
+  function generateSigningKeyPair() {
+    return nacl.sign.keyPair()
+  }
+
+  function generateEncryptionKeyPair() {
+    return nacl.box.keyPair()
   }
 
   /**
@@ -51,13 +56,24 @@ export const useEncryptionStore = defineStore('encryption', () => {
   }
 
   /**
+    * Convert a seed into an ECDH key pair.
+    *
+    * @param seed - The input seed.
+    * @returns ECDH key pair with publicKey and secretKey properties.
+    */
+  function seedToECDHKeyPair(seed: Uint8Array): nacl.BoxKeyPair {
+    return nacl.box.keyPair.fromSecretKey(seed.slice(0, 32))
+  }
+
+  /**
  * Convert a mnemonic phrase into a deterministic EdDSA key pair.
  * @param mnemonic - The input mnemonic phrase.
  * @return EdDSA key pair with publicKey and secretKey properties.
  */
   async function mnemonicToKeyPair(mnemonic: string) {
     const seed = await mnemonicToSeed(mnemonic)
-    keypair.value = seedToEdDSAKeyPair(seed)
+    signing_keypair.value = seedToEdDSAKeyPair(seed)
+    encryption_keypair.value = seedToECDHKeyPair(seed)
   }
 
   /**
@@ -71,29 +87,32 @@ export const useEncryptionStore = defineStore('encryption', () => {
   function encryptMessage(
     message: string,
     recipientPublicKey: Uint8Array,
+    senderSecretKey: Uint8Array,
   ): { nonce: Uint8Array; encryptedMessage: Uint8Array } {
     const nonce = nacl.randomBytes(nacl.box.nonceLength) // Generate a nonce.
+
     const encryptedMessage = nacl.box(
       new TextEncoder().encode(message),
       nonce,
       recipientPublicKey,
-      keypair.value?.secretKey as Uint8Array,
+      senderSecretKey,
     )
     return { nonce, encryptedMessage }
   }
 
   /**
- * Decrypts a given encrypted message using the recipient's secret key and the sender's public key.
- *
- * @param encryptedData - An object containing the nonce and the encrypted message.
- * @param recipientSecretKey - The recipient's secret key.
- * @param senderPublicKey - The sender's public key.
- * @returns The decrypted message.
- */
+   * Decrypts a given encrypted message using the recipient's secret key and the sender's public key.
+   *
+   * @param encryptedData - An object containing the nonce and the encrypted message.
+   * @param senderPublicKey - The sender's public key.
+   * @param recipientSecretKey - The recipient's secret key.
+   * @returns The decrypted message.
+   *
+   */
   function decryptMessage(
     encryptedData: { nonce: Uint8Array; encryptedMessage: Uint8Array },
-    recipientSecretKey: Uint8Array,
     senderPublicKey: Uint8Array,
+    recipientSecretKey: Uint8Array,
   ): string {
     const decryptedMessage = nacl.box.open(
       encryptedData.encryptedMessage,
@@ -140,8 +159,10 @@ export const useEncryptionStore = defineStore('encryption', () => {
     decryptMessage,
     signMessage,
     verifySignedMessage,
-    keypair,
-    setKeypair,
+    signing_keypair,
+    encryption_keypair,
+    generateSigningKeyPair,
+    generateEncryptionKeyPair,
   }
 })
 

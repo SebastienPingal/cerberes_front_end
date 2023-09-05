@@ -2,6 +2,7 @@
 import { generate } from 'random-words'
 
 const encryption_store = useEncryptionStore()
+const indexedDb_store = useIndexedDBStore()
 const prompt = ref('init')
 const words: Ref<string[]> = ref([])
 
@@ -11,6 +12,7 @@ function generate12RandomWords() {
 
 function generate_key() {
   encryption_store.mnemonicToKeyPair(words.value.join(' '))
+  indexedDb_store.storeKeyPair()
 }
 
 onMounted(() => {
@@ -73,13 +75,13 @@ onMounted(() => {
         Here is your PGP public key.
       </p>
       <p class="text-xs">
-        {{ encryption_store.keypair?.secretKey }}
+        {{ encryption_store.signing_keypair?.secretKey }}
       </p>
       <p>
         Here is your PGP private key.
       </p>
       <p class="text-xs">
-        {{ encryption_store.keypair?.publicKey }}
+        {{ encryption_store.signing_keypair?.publicKey }}
       </p>
     </div>
   </div>
