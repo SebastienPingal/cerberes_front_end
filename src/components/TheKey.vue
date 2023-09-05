@@ -30,7 +30,6 @@ function encrypt_lorem_ipsum() {
 <template>
   <div>
     <div v-if="signing_keypair?.secretKey">
-      <h1>PGP Secret</h1>
       <p>You have a key</p>
       <p>{{ signing_keypair.secretKey }}</p>
       <p>{{ lorem_ipsum }}</p>

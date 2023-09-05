@@ -2,6 +2,7 @@
 // https://github.com/vueuse/head
 // you can use this to manipulate the document head in any components,
 // they will be rendered correctly in the html results with vite-ssg
+
 useHead({
   title: 'Cerberes',
   meta: [
@@ -18,6 +19,18 @@ useHead({
       href: () => preferredDark.value ? '/favicon-dark.svg' : '/favicon.svg',
     },
   ],
+})
+
+const indexedDB_store = useIndexedDBStore()
+
+onMounted(async () => {
+  const darkQuery = window.matchMedia('(prefers-color-scheme: dark)')
+  darkQuery.addEventListener('change', () => {
+    preferredDark.value = darkQuery.matches
+  })
+  preferredDark.value = darkQuery.matches
+
+  await indexedDB_store.retrieveAndSetKeyPairs()
 })
 </script>
 

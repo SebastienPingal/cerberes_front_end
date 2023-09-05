@@ -10,9 +10,9 @@ function generate12RandomWords() {
   words.value = generate(12)
 }
 
-function generate_key() {
-  encryption_store.mnemonicToKeyPair(words.value.join(' '))
-  indexedDb_store.storeKeyPair()
+async function generate_key() {
+  await encryption_store.mnemonicToKeyPair(words.value.join(' '))
+  await indexedDb_store.storeKeyPair()
 }
 
 onMounted(() => {

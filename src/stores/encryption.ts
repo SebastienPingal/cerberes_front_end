@@ -14,11 +14,35 @@ export const useEncryptionStore = defineStore('encryption', () => {
   }
 
   /**
- * Convert a mnemonic phrase into a deterministic seed using PBKDF2.
- * @param mnemonic - The input mnemonic phrase.
- * @param salt - A salt for the PBKDF2 derivation (should remain constant for consistent results).
- * @return A deterministic seed.
- */
+    * Set both the signing and encryption key pairs.
+    * @param signing_keypair_public - The signing key pair's public key.
+    * @param signing_keypair_secret - The signing key pair's secret key.
+    * @param encryption_keypair_public - The encryption key pair's public key.
+    * @param encryption_keypair_secret - The encryption key pair's secret key.
+    * @return void
+  * */
+  function setKeyPairs(
+    signing_keypair_public: Uint8Array,
+    signing_keypair_secret: Uint8Array,
+    encryption_keypair_public: Uint8Array,
+    encryption_keypair_secret: Uint8Array,
+  ) {
+    signing_keypair.value = {
+      publicKey: signing_keypair_public,
+      secretKey: signing_keypair_secret,
+    }
+    encryption_keypair.value = {
+      publicKey: encryption_keypair_public,
+      secretKey: encryption_keypair_secret,
+    }
+  }
+
+  /**
+    * Convert a mnemonic phrase into a deterministic seed using PBKDF2.
+    * @param mnemonic - The input mnemonic phrase.
+    * @param salt - A salt for the PBKDF2 derivation (should remain constant for consistent results).
+    * @return A deterministic seed.
+    */
   async function mnemonicToSeed(mnemonic: string, salt: string = 'Cerberes protège mes secrets les plus sombres'): Promise<Uint8Array> {
     const encoder = new TextEncoder()
     const mnemonicBytes = encoder.encode(mnemonic)
@@ -47,10 +71,10 @@ export const useEncryptionStore = defineStore('encryption', () => {
   }
 
   /**
- * Convert a seed into an EdDSA key pair.
- * @param seed - The input seed.
- * @return EdDSA key pair with publicKey and secretKey properties.
- */
+    * Convert a seed into an EdDSA key pair.
+    * @param seed - The input seed.
+    * @return EdDSA key pair with publicKey and secretKey properties.
+    */
   function seedToEdDSAKeyPair(seed: Uint8Array): nacl.SignKeyPair {
     return nacl.sign.keyPair.fromSeed(seed)
   }
@@ -66,10 +90,10 @@ export const useEncryptionStore = defineStore('encryption', () => {
   }
 
   /**
- * Convert a mnemonic phrase into a deterministic EdDSA key pair.
- * @param mnemonic - The input mnemonic phrase.
- * @return EdDSA key pair with publicKey and secretKey properties.
- */
+    * Convert a mnemonic phrase into a deterministic EdDSA key pair.
+    * @param mnemonic - The input mnemonic phrase.
+    * @return EdDSA key pair with publicKey and secretKey properties.
+    */
   async function mnemonicToKeyPair(mnemonic: string) {
     const seed = await mnemonicToSeed(mnemonic)
     signing_keypair.value = seedToEdDSAKeyPair(seed)
@@ -77,13 +101,13 @@ export const useEncryptionStore = defineStore('encryption', () => {
   }
 
   /**
- * Encrypts a given message for a recipient using the sender's secret key and the recipient's public key.
- *
- * @param message - The plaintext message to be encrypted.
- * @param senderSecretKey - The sender's secret key.
- * @param recipientPublicKey - The recipient's public key.
- * @returns An object containing the nonce and the encrypted message.
- */
+    * Encrypts a given message for a recipient using the sender's secret key and the recipient's public key.
+    *
+    * @param message - The plaintext message to be encrypted.
+    * @param senderSecretKey - The sender's secret key.
+    * @param recipientPublicKey - The recipient's public key.
+    * @returns An object containing the nonce and the encrypted message.
+    */
   function encryptMessage(
     message: string,
     recipientPublicKey: Uint8Array,
@@ -101,14 +125,14 @@ export const useEncryptionStore = defineStore('encryption', () => {
   }
 
   /**
-   * Decrypts a given encrypted message using the recipient's secret key and the sender's public key.
-   *
-   * @param encryptedData - An object containing the nonce and the encrypted message.
-   * @param senderPublicKey - The sender's public key.
-   * @param recipientSecretKey - The recipient's secret key.
-   * @returns The decrypted message.
-   *
-   */
+    * Decrypts a given encrypted message using the recipient's secret key and the sender's public key.
+    *
+    * @param encryptedData - An object containing the nonce and the encrypted message.
+    * @param senderPublicKey - The sender's public key.
+    * @param recipientSecretKey - The recipient's secret key.
+    * @returns The decrypted message.
+    *
+    */
   function decryptMessage(
     encryptedData: { nonce: Uint8Array; encryptedMessage: Uint8Array },
     senderPublicKey: Uint8Array,
@@ -154,6 +178,7 @@ export const useEncryptionStore = defineStore('encryption', () => {
   }
 
   return {
+    setKeyPairs,
     mnemonicToKeyPair,
     encryptMessage,
     decryptMessage,
