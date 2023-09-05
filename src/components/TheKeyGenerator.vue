@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import crypto from 'crypto-js'
 import { generate } from 'random-words'
 
+const encryption_store = useEncryptionStore()
 const prompt = ref('init')
 const words: Ref<string[]> = ref([])
 
@@ -9,31 +9,8 @@ function generate12RandomWords() {
   words.value = generate(12)
 }
 
-const my_public_key = ref('')
-const my_private_key = ref('')
-
-function generateKeyPairFromMnemonic(mnemonic: string): crypto.KeyPairSyncResult<crypto.KeyObject> {
-  const seed = crypto.createHash('sha256').update(mnemonic).digest()
-
-  const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
-    modulusLength: 4096,
-    publicKeyEncoding: {
-      type: 'spki',
-      format: 'pem',
-    },
-    privateKeyEncoding: {
-      type: 'pkcs8',
-      format: 'pem',
-      cipher: 'aes-256-cbc',
-      passphrase: '', // Add your passphrase here if needed
-    },
-    passphrase: '', // Add your passphrase here if needed
-    seed,
-  })
-
-  my_public_key.value = publicKey
-  my_private_key.value = privateKey
-  return { publicKey, privateKey }
+function generate_key() {
+  encryption_store.mnemonicToKeyPair(words.value.join(' '))
 }
 
 onMounted(() => {
@@ -86,24 +63,24 @@ onMounted(() => {
         <o-button @click="generate12RandomWords">
           Change them
         </o-button>
-        <o-button @click="generateKeyPairFromMnemonic(words.join(' ')); prompt = 'show_pgp'">
+        <o-button @click="generate_key(); prompt = 'show_pgp'">
           Accept them
         </o-button>
       </div>
-      <div v-if="prompt === 'show_pgp'" class="flex flex-col items-center gap-2">
-        <p>
-          Here is your PGP public key.
-        </p>
-        <p class="text-xs">
-          {{ my_public_key }}
-        </p>
-        <p>
-          Here is your PGP private key.
-        </p>
-        <p class="text-xs">
-          {{ my_private_key }}
-        </p>
-      </div>
+    </div>
+    <div v-if="prompt === 'show_pgp'" class="flex flex-col items-center gap-2">
+      <p>
+        Here is your PGP public key.
+      </p>
+      <p class="text-xs">
+        {{ encryption_store.keypair?.secretKey }}
+      </p>
+      <p>
+        Here is your PGP private key.
+      </p>
+      <p class="text-xs">
+        {{ encryption_store.keypair?.publicKey }}
+      </p>
     </div>
   </div>
 </template>

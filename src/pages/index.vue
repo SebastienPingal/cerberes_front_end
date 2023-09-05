@@ -7,7 +7,6 @@ const display_store = useDisplayStore()
 const user_store = useUserStore()
 const user = computed(() => user_store.user)
 const router = useRouter()
-const test = import.meta.env.VITE_API_URL
 </script>
 
 <template>
@@ -17,7 +16,7 @@ const test = import.meta.env.VITE_API_URL
       <TheLogin v-if="display_store.login" />
       <TheRegister v-if="display_store.register" />
     </div>
-    <ThePGP v-else />
+    <TheKey v-else />
   </div>
 </template>
 

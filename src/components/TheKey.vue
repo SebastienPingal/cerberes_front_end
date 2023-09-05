@@ -1,15 +1,16 @@
 <script setup lang="ts">
-const user_store = useUserStore()
-const pgp_secret: string[] = user_store.user.PGP_SecretKeys
+const encryption_store = useEncryptionStore()
 const display_generator = ref(false)
 const display_importator = ref(false)
+const keypair = computed(() => encryption_store.keypair)
 </script>
 
 <template>
   <div>
-    <div v-if="pgp_secret">
+    <div v-if="keypair?.secretKey">
       <h1>PGP Secret</h1>
-      <p>{{ pgp_secret }}</p>
+      <p>You have a key</p>
+      <p>{{ keypair.secretKey }}</p>
     </div>
     <div v-else class="flex flex-col gap-2">
       <div v-if="!display_generator && !display_importator">
@@ -28,8 +29,8 @@ const display_importator = ref(false)
           Change your mind
         </o-button>
       </div>
-      <ThePGPGenerator v-if="display_generator" />
-      <ThePGPImportator v-if="display_importator" />
+      <TheKeyGenerator v-if="display_generator" />
+      <TheKeyImportator v-if="display_importator" />
     </div>
   </div>
 </template>
