@@ -2,25 +2,29 @@
 const encryption_store = useEncryptionStore()
 const display_generator = ref(false)
 const display_importator = ref(false)
+
 const signing_keypair = computed(() => encryption_store.signing_keypair)
 const encryption_keypair = computed(() => encryption_store.encryption_keypair)
+
 const lorem_ipsum = ref('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget ultricies ultricies, nisl nisl ultricies nisl, nec ult')
 const encrypted_lorem_ipsum = ref(null) as Ref<{ nonce: Uint8Array; encryptedMessage: Uint8Array } | null>
 const decrypted_lorem_ipsum = ref(null) as Ref<string | null>
 
 function encrypt_lorem_ipsum() {
-  if (encryption_keypair?.value?.publicKey) {
+  if (encryption_keypair?.value?.publicKey && signing_keypair?.value?.secretKey) {
     const bob_encryption_keypair = encryption_store.generateEncryptionKeyPair()
 
-    encrypted_lorem_ipsum.value = encryption_store.encryptMessage(
+    encrypted_lorem_ipsum.value = encryption_store.signAndEncryptMessage(
       lorem_ipsum.value,
-      bob_encryption_keypair.publicKey,
+      signing_keypair.value.secretKey,
       encryption_keypair.value.secretKey,
+      bob_encryption_keypair.publicKey,
     )
 
-    decrypted_lorem_ipsum.value = encryption_store.decryptMessage(
+    decrypted_lorem_ipsum.value = encryption_store.decryptAndVerifyMessage(
       encrypted_lorem_ipsum.value,
-      encryption_keypair.value.publicKey,
+      signing_keypair.value.publicKey,
+      encryption_keypair.value.secretKey,
       bob_encryption_keypair.secretKey,
     )
   }
@@ -29,14 +33,13 @@ function encrypt_lorem_ipsum() {
 
 <template>
   <div>
-    <div v-if="signing_keypair?.secretKey">
+    <div v-if="signing_keypair?.secretKey" class="w-20rem">
       <p>You have a key</p>
-      <p>{{ signing_keypair.secretKey }}</p>
       <p>{{ lorem_ipsum }}</p>
       <o-button @click="encrypt_lorem_ipsum">
         Encrypt
       </o-button>
-      <p v-if="encrypted_lorem_ipsum" class="text-red">
+      <p v-if="encrypted_lorem_ipsum" class="truncate text-red">
         {{ encrypted_lorem_ipsum }}
       </p>
       <p v-if="decrypted_lorem_ipsum" class="text-blue">
