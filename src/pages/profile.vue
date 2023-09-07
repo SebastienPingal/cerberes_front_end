@@ -9,7 +9,9 @@ const user = computed(() => user_store.user)
 
 <template>
   <div class="flex flex-col items-center gap-3">
-    <img src="../../Derperus.png" alt="Derperus" class="w-250px cursor-pointer" @click="router.push('/')">
+    <div class="rounded-lg bg-white p-2">
+      <img src="../assets/Cerberus.jpg" alt="Cerberus" class="h-6rem cursor-pointer" @click="router.push('/')">
+    </div>
     <h1 class="text-2xl">
       Profile
     </h1>

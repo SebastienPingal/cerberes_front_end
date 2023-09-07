@@ -1,4 +1,4 @@
-![image of derperus](Derperus.png)
+![image of derperus](Cerberus.jpg)
 
 # Cerberes Front End
 

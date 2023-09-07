@@ -11,7 +11,9 @@ const router = useRouter()
 
 <template>
   <div class="flex flex-col items-center gap-3">
-    <img src="../../Derperus.png" alt="Derperus" class="w-250px" @click="router.push('/')">
+    <div class="rounded-lg bg-white p-2">
+      <img src="../assets/Cerberus.jpg" alt="Cerberus" class="h-6rem cursor-pointer" @click="router.push('/')">
+    </div>
     <div v-if="!user">
       <TheLogin v-if="display_store.login" />
       <TheRegister v-if="display_store.register" />
