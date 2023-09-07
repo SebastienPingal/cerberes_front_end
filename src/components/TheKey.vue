@@ -14,17 +14,40 @@ function encrypt_lorem_ipsum() {
   if (encryption_keypair?.value?.publicKey && signing_keypair?.value?.secretKey) {
     const bob_encryption_keypair = encryption_store.generateEncryptionKeyPair()
 
+    const test = 'bonjour'
+    const signed = encryption_store.signMessage(test, signing_keypair.value.secretKey)
+    const verified = encryption_store.verifySignedMessage(signed, signing_keypair.value.publicKey)
+    console.log('signed', signed)
+    console.log('verified', verified)
+
+    // test just to encrypt and decript a message
+    const encrypted = encryption_store.encryptMessage(
+      test,
+      bob_encryption_keypair.publicKey,
+      encryption_keypair.value.secretKey,
+    )
+
+    const decrypted = encryption_store.decryptMessage(
+      encrypted,
+      encryption_keypair.value.publicKey,
+      bob_encryption_keypair.secretKey,
+    )
+    console.log('encrypted', encrypted)
+    console.log('decrypted', decrypted)
+
+    // test to encrypt and decript a message with signature
+
     encrypted_lorem_ipsum.value = encryption_store.signAndEncryptMessage(
       lorem_ipsum.value,
-      signing_keypair.value.secretKey,
-      encryption_keypair.value.secretKey,
       bob_encryption_keypair.publicKey,
+      encryption_keypair.value.secretKey,
+      signing_keypair.value.secretKey,
     )
 
     decrypted_lorem_ipsum.value = encryption_store.decryptAndVerifyMessage(
       encrypted_lorem_ipsum.value,
       signing_keypair.value.publicKey,
-      encryption_keypair.value.secretKey,
+      encryption_keypair.value.publicKey,
       bob_encryption_keypair.secretKey,
     )
   }
@@ -39,10 +62,10 @@ function encrypt_lorem_ipsum() {
       <o-button @click="encrypt_lorem_ipsum">
         Encrypt
       </o-button>
-      <p v-if="encrypted_lorem_ipsum" class="truncate text-red">
+      <p v-if="encrypted_lorem_ipsum" class="truncated text-red">
         {{ encrypted_lorem_ipsum }}
       </p>
-      <p v-if="decrypted_lorem_ipsum" class="text-blue">
+      <p v-if="decrypted_lorem_ipsum" class="truncated text-blue">
         {{ decrypted_lorem_ipsum }}
       </p>
     </div>

@@ -125,6 +125,31 @@ export const useEncryptionStore = defineStore('encryption', () => {
   }
 
   /**
+    * Encrypt a signed message for a recipient using the sender's secret key and the recipient's public key.
+    *
+    * @param signedMessage - The signed message to be encrypted.
+    * @param recipientEncryptionPublicKey - The recipient's public encryption key.
+    * @param senderEncryptionSecretKey - The sender's secret encryption key.
+    * @returns An object containing the nonce and the encrypted message.
+    *
+    **/
+  function encryptSignedMessage(
+    signedMessage: Uint8Array,
+    recipientPublicEncryptionKey: Uint8Array,
+    senderSecretEncryptionKey: Uint8Array,
+  ): { nonce: Uint8Array; encryptedMessage: Uint8Array } {
+    const nonce = nacl.randomBytes(nacl.box.nonceLength) // Generate a nonce.
+
+    const encryptedMessage = nacl.box(
+      signedMessage,
+      nonce,
+      recipientPublicEncryptionKey,
+      senderSecretEncryptionKey,
+    )
+    return { nonce, encryptedMessage }
+  }
+
+  /**
     * Sign a given message and encrypts it
     *
     * @param message - The plaintext message to be encrypted.
@@ -135,17 +160,17 @@ export const useEncryptionStore = defineStore('encryption', () => {
     **/
   function signAndEncryptMessage(
     message: string,
-    senderSecretSigningKey: Uint8Array,
-    senderSecretEncryptionKey: Uint8Array,
     recipientPublicEncryptionKey: Uint8Array,
+    senderSecretEncryptionKey: Uint8Array,
+    senderSecretSigningKey: Uint8Array,
   ): { nonce: Uint8Array; encryptedMessage: Uint8Array } {
     const signedMessage = signMessage(
       message,
       senderSecretSigningKey,
     )
 
-    const { nonce, encryptedMessage } = encryptMessage(
-      new TextDecoder().decode(signedMessage),
+    const { nonce, encryptedMessage } = encryptSignedMessage(
+      signedMessage,
       recipientPublicEncryptionKey,
       senderSecretEncryptionKey,
     )
@@ -181,6 +206,33 @@ export const useEncryptionStore = defineStore('encryption', () => {
   }
 
   /**
+    * Decypt a signed message using the recipient's secret key and the sender's public key.
+    *
+    * @param encryptedData - An object containing the nonce and the encrypted message.
+    * @param senderPublicEncryptionKey - The sender's public encryption key.
+    * @param recipientSecretEncryptionKey - The recipient's secret encryption key.
+    * @returns The decrypted message.
+    *
+    **/
+  function decryptSignedMessage(
+    encryptedData: { nonce: Uint8Array; encryptedMessage: Uint8Array },
+    senderPublicEncryptionKey: Uint8Array,
+    recipientSecretEncryptionKey: Uint8Array,
+  ): Uint8Array {
+    const decryptedMessage = nacl.box.open(
+      encryptedData.encryptedMessage,
+      encryptedData.nonce,
+      senderPublicEncryptionKey,
+      recipientSecretEncryptionKey,
+    )
+
+    if (!decryptedMessage)
+      throw new Error('Could not decrypt message')
+
+    return decryptedMessage
+  }
+
+  /**
     * Decrypt and verify a given encrypted message using the recipient's secret key and the sender's public key.
     *
     * @param encryptedData - An object containing the nonce and the encrypted message.
@@ -196,7 +248,7 @@ export const useEncryptionStore = defineStore('encryption', () => {
     senderPublicEncryptionKey: Uint8Array,
     recipientSecretEncryptionKey: Uint8Array,
   ): string {
-    const decryptedMessage = decryptMessage(
+    const decryptedMessage = decryptSignedMessage(
       encryptedData,
       senderPublicEncryptionKey,
       recipientSecretEncryptionKey,
@@ -206,14 +258,14 @@ export const useEncryptionStore = defineStore('encryption', () => {
       throw new Error('Could not decrypt message')
 
     const verifiedMessage = verifySignedMessage(
-      new TextEncoder().encode(decryptedMessage),
+      decryptedMessage,
       senderPublicSigningKey,
     )
 
-    if (verifiedMessage !== decryptedMessage)
+    if (!verifiedMessage)
       throw new Error('signed messade don\'t match')
 
-    return decryptedMessage
+    return verifiedMessage
   }
 
   /**
@@ -223,8 +275,8 @@ export const useEncryptionStore = defineStore('encryption', () => {
  * @param senderSecretKey - The sender's secret key.
  * @returns The signed message.
  */
-  function signMessage(message: string, senderSecretSigninKey: Uint8Array): Uint8Array {
-    return nacl.sign(new TextEncoder().encode(message), senderSecretSigninKey)
+  function signMessage(message: string, senderSecretSigningKey: Uint8Array): Uint8Array {
+    return nacl.sign(new TextEncoder().encode(message), senderSecretSigningKey)
   }
 
   /**

@@ -16,6 +16,7 @@ declare module 'vue' {
     TheInput: typeof import('./components/TheInput.vue')['default']
     TheKey: typeof import('./components/TheKey.vue')['default']
     TheKeyGenerator: typeof import('./components/TheKeyGenerator.vue')['default']
+    TheKeyImportator: typeof import('./components/TheKeyImportator.vue')['default']
     TheLogin: typeof import('./components/TheLogin.vue')['default']
     ThePGP: typeof import('./components/ThePGP.vue')['default']
     ThePGPGenerator: typeof import('./components/ThePGPGenerator.vue')['default']
