@@ -11,3 +11,4 @@ cypress/downloads
 cypress/screenshots
 .env
 components.d.ts
+src/auto-imports.d.ts
