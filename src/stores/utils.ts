@@ -1,45 +1,38 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
 export const useUtilsStore = defineStore('utils', () => {
+  const encryption_store = useEncryptionStore()
   function uint8ArrayToBase64(buffer: Uint8Array): string {
     return btoa(String.fromCharCode(...buffer))
   }
 
-  // a function that kinda looks like a boat.
-  // I mean, look at the shape of it
-  // And the color
-  // this comment is like the smoke
-  // and the function is the boat
-  // it is sailing away
-  // man!
-  // it is an aircraft carrier !
-  // wow
   function serializedKeys(
-    encryption_key_pair: {
-      publicKey: Uint8Array
-      secretKey: Uint8Array
-    },
-    signing_key_pair: {
-      publicKey: Uint8Array
-      secretKey: Uint8Array
-    }) {
+    public_encryption_key: Uint8Array,
+    secret_encryption_key: Uint8Array,
+    public_signing_key: Uint8Array,
+    secret_signing_key: Uint8Array,
+  ) {
     return {
-      encryptionPublicKey: uint8ArrayToBase64(encryption_key_pair.publicKey as Uint8Array),
-      encryptionSecretKey: uint8ArrayToBase64(encryption_key_pair.secretKey as Uint8Array),
-      signingPublicKey: uint8ArrayToBase64(signing_key_pair.publicKey as Uint8Array),
-      signingSecretKey: uint8ArrayToBase64(signing_key_pair.secretKey as Uint8Array),
+      encryptionPublicKey: uint8ArrayToBase64(public_encryption_key),
+      encryptionSecretKey: uint8ArrayToBase64(secret_encryption_key),
+      signingPublicKey: uint8ArrayToBase64(public_signing_key),
+      signingSecretKey: uint8ArrayToBase64(secret_signing_key),
     }
   }
 
-  const JSonKeys = JSON.stringify(serializedKeys)
-
   function download_keys() {
+    const JSonKeys = JSON.stringify(serializedKeys(
+      encryption_store.encryption_keypair?.publicKey as Uint8Array,
+      encryption_store.encryption_keypair?.secretKey as Uint8Array,
+      encryption_store.signing_keypair?.publicKey as Uint8Array,
+      encryption_store.signing_keypair?.secretKey as Uint8Array,
+    ))
     const blob = new Blob([JSonKeys], { type: 'text/plain' })
     const blobURL = window.URL.createObjectURL(blob)
     const tempLink = document.createElement('a')
     tempLink.style.display = 'none'
     tempLink.href = blobURL
-    tempLink.setAttribute('download', 'keys.json')
+    tempLink.setAttribute('download', 'my_keys.json')
 
     document.body.appendChild(tempLink)
     tempLink.click()
