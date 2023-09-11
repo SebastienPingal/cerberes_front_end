@@ -123,6 +123,35 @@ export const useIndexedDBStore = defineStore('indexedDB ', () => {
     }>
   }
 
+  async function delete_indexedDB_keypair() {
+    db = await setupIndexedDB()
+    const delete_key_pair = new Promise((resolve, reject) => {
+      if (!db) {
+        console.error('IndexedDB not initialized.')
+        reject(new Error('IndexedDB not initialized.'))
+        return
+      }
+
+      const transaction: IDBTransaction = db.transaction([storeName], 'readwrite')
+      const store: IDBObjectStore = transaction.objectStore(storeName)
+
+      store.delete('publicSigningKey')
+      store.delete('privateSigningKey')
+      store.delete('publicEncryptionKey')
+      store.delete('privateEncryptionKey')
+
+      transaction.oncomplete = (
+      ) => resolve(
+        closeDB(),
+      )
+      transaction.onerror = (event) => {
+        closeDB()
+        reject(event)
+      }
+    })
+    return delete_key_pair
+  }
+
   function closeDB() {
     if (db)
       db.close()
@@ -133,6 +162,7 @@ export const useIndexedDBStore = defineStore('indexedDB ', () => {
     storeKeyPair,
     retrieveKeyPair,
     retrieveAndSetKeyPairs,
+    delete_indexedDB_keypair,
   }
 })
 

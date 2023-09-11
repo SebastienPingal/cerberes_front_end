@@ -1,9 +1,11 @@
 <script setup lang="ts">
-const user_store = useUserStore()
+const utils_store = useUtilsStore()
 </script>
 
 <template>
   <div>
-    j'importe
+    <o-button @click="utils_store.retrieve_keys">
+      Import it
+    </o-button>
   </div>
 </template>

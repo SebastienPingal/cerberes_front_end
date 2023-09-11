@@ -294,6 +294,11 @@ export const useEncryptionStore = defineStore('encryption', () => {
     return new TextDecoder().decode(message)
   }
 
+  function delete_keypairs() {
+    signing_keypair.value = null
+    encryption_keypair.value = null
+  }
+
   return {
     setKeyPairs,
     mnemonicToKeyPair,
@@ -307,6 +312,7 @@ export const useEncryptionStore = defineStore('encryption', () => {
     encryption_keypair,
     generateSigningKeyPair,
     generateEncryptionKeyPair,
+    delete_keypairs,
   }
 })
 
