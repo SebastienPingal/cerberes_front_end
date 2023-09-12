@@ -48,13 +48,13 @@ export const useUtilsStore = defineStore('utils', () => {
     fileInput.type = 'file'
     fileInput.accept = 'application/json,text/plain'
 
-    fileInput.addEventListener('change', (event) => {
+    fileInput.addEventListener('change', async (event) => {
       const files = (event.target as HTMLInputElement).files
       if (files && files.length > 0) {
         const file = files[0]
         const reader = new FileReader()
 
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
           const text = (e.target as FileReader).result as string
           try {
             const json = JSON.parse(text)
@@ -89,6 +89,7 @@ export const useUtilsStore = defineStore('utils', () => {
                 encryptionPublicKey,
                 encryptionSecretKey,
               )
+              await indexedDB_store.storeKeyPair()
             }
             else {
               console.error('Invalid keys format')

@@ -12,8 +12,6 @@ const encryption_keypair = computed(() => encryption_store.encryption_keypair)
   <div>
     <div v-if="signing_keypair?.secretKey && encryption_keypair?.secretKey" class="w-20rem">
       <p>You have a key</p>
-      {{ encryption_store.signing_keypair }}
-      {{ encryption_store.encryption_keypair }}
       <div class="flex justify-around gap-3">
         <o-button @click="utils_store.download_keys">
           Export it
@@ -31,7 +29,7 @@ const encryption_keypair = computed(() => encryption_store.encryption_keypair)
           <o-button @click="display_generator = true">
             Generate it
           </o-button>
-          <o-button @click="display_importator = true">
+          <o-button @click="utils_store.retrieve_keys">
             Import it
           </o-button>
         </div>
@@ -43,7 +41,6 @@ const encryption_keypair = computed(() => encryption_store.encryption_keypair)
         </o-button>
       </div>
       <TheKeyGenerator v-if="display_generator" />
-      <TheKeyImportator v-if="display_importator" />
     </div>
   </div>
 </template>
