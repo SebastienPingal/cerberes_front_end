@@ -8,6 +8,7 @@ export interface IUser {
   User_contact_uuid?: string
   PGP_PublicKey?: string
   PGP_Secretkeys?: string[]
+  contact_list?: IContact[]
 }
 
 export interface IContact {

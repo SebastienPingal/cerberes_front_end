@@ -22,6 +22,7 @@ useHead({
 })
 
 const indexedDB_store = useIndexedDBStore()
+const user_store = useUserStore()
 
 onMounted(async () => {
   const darkQuery = window.matchMedia('(prefers-color-scheme: dark)')
@@ -31,6 +32,7 @@ onMounted(async () => {
   preferredDark.value = darkQuery.matches
 
   await indexedDB_store.retrieveAndSetKeyPairs()
+  await user_store.get_user()
 })
 </script>
 
