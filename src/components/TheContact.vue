@@ -8,6 +8,6 @@ const props = defineProps<{
 
 <template>
   <div>
-    Hello
+    {{ props.contact.User.User_name }}
   </div>
 </template>
