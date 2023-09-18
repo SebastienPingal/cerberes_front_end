@@ -15,6 +15,10 @@ export interface IContact {
   Contact_id: number
   User_id: number
   Contact_User_id: number
+  User: {
+    User_name: string
+    PGP_PublicKey: string
+  }
 }
 
 export interface IConversation {
