@@ -16,7 +16,7 @@ const user = computed(() => user_store.user)
     </div>
     <div v-else>
       <div>
-        <TheConversations />
+        <TheConversationList />
         <TheMessages />
       </div>
     </div>

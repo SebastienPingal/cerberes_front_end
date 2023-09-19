@@ -23,6 +23,7 @@ export interface IContact {
 
 export interface IConversation {
   Conversation_id: number
+  Users: IUser[]
 }
 
 export interface IUserConversation {

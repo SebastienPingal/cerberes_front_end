@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import axios from 'axios'
-import type { IContact, IUser } from '../types'
+import type { IContact, IConversation, IUser } from '../types'
 
 export const useUserStore = defineStore('user', () => {
   const api_url = import.meta.env.VITE_API_URL
@@ -93,6 +93,28 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  async function create_conversation(members_id: number[]) {
+    try {
+      await axios.post(`${api_url}/conversations`, {
+        members_id,
+      }, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      }).then((response) => {
+        user.value.conversations.push(response.data as IConversation)
+      })
+    }
+    catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401)
+          user.value = null
+        else
+          throw new Error(error.response?.data)
+      }
+      else { console.error(error) }
+    }
+  }
+
   function logout() {
     user.value = null
   }
@@ -103,6 +125,7 @@ export const useUserStore = defineStore('user', () => {
     register,
     get_user,
     add_contact,
+    create_conversation,
     logout,
   }
 })

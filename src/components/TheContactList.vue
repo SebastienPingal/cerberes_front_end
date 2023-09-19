@@ -15,12 +15,9 @@ function add_contact() {
 
 <template>
   <div class="min-w-15rem flex flex-col gap-5">
-    <h3 class="text-xl">
-      Contacts
-    </h3>
     <div v-if="user.contact_list" class="flex flex-col gap-2">
-      <o-button v-for="contact in user.contact_list" :key="contact.User_id">
-        <TheContact :contact="contact" @click="$emit('selectcontact', contact)" />
+      <o-button v-for="contact in user.contact_list" :key="contact.User_id" @click="$emit('selectcontact', contact)">
+        <TheContact :contact="contact" />
       </o-button>
     </div>
     <div v-else>
