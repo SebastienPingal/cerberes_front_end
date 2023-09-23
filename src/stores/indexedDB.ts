@@ -2,12 +2,17 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 
 export const useIndexedDBStore = defineStore('indexedDB ', () => {
   const encryption_store = useEncryptionStore()
+  const user_store = useUserStore()
+  const user = computed(() => user_store.user)
   const dbName = 'KeyDatabase'
   const storeName = 'keys'
   let db: IDBDatabase | null = null
 
   async function retrieveAndSetKeyPairs() {
     const retrievedKeys = await retrieveKeyPair()
+    if (user.value.encryption_public_key !== retrievedKeys.publicEncryptionKey
+       || user.value.signing_public_key !== retrievedKeys.publicSigningKey)
+      return
 
     encryption_store.setKeyPairs(
       retrievedKeys.publicSigningKey,
