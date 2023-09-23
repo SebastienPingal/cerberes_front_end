@@ -3,6 +3,7 @@ import { generate } from 'random-words'
 
 const encryption_store = useEncryptionStore()
 const indexedDb_store = useIndexedDBStore()
+const user_store = useUserStore()
 const prompt = ref('init')
 const words: Ref<string[]> = ref([])
 
@@ -13,6 +14,7 @@ function generate12RandomWords() {
 async function generate_key() {
   await encryption_store.mnemonicToKeyPair(words.value.join(' '))
   await indexedDb_store.storeKeyPair()
+  await user_store.update_public_keys()
 }
 
 onMounted(() => {

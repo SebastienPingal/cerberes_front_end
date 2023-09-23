@@ -6,8 +6,8 @@ export interface IUser {
   User_email: string
   User_password?: string
   User_contact_uuid?: string
-  PGP_PublicKey?: string
-  PGP_Secretkeys?: string[]
+  encryption_public_key?: string
+  signing_public_key?: string
   contact_list?: IContact[]
 }
 

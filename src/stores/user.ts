@@ -4,6 +4,7 @@ import type { IContact, IConversation, IUser } from '../types'
 
 export const useUserStore = defineStore('user', () => {
   const api_url = import.meta.env.VITE_API_URL
+  const encryption_store = useEncryptionStore()
 
   const user = ref(useStorage('curent_user', <IUser | null>null, undefined, {
     serializer: {
@@ -35,6 +36,29 @@ export const useUserStore = defineStore('user', () => {
   async function get_user() {
     try {
       await axios.get(`${api_url}/users/me`, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      }).then((response) => {
+        user.value = response.data as IUser
+      })
+    }
+    catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401)
+          user.value = null
+        else
+          throw new Error(error.response?.data)
+      }
+      else { console.error(error) }
+    }
+  }
+
+  async function update_public_keys() {
+    try {
+      await axios.patch(`${api_url}/users/me/keypairs`, {
+        encryption_public_key: encryption_store.encryption_keypair?.publicKey,
+        signing_public_key: encryption_store.signing_keypair?.publicKey,
+      }, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       }).then((response) => {
@@ -124,6 +148,7 @@ export const useUserStore = defineStore('user', () => {
     login,
     register,
     get_user,
+    update_public_keys,
     add_contact,
     create_conversation,
     logout,

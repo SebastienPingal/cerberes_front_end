@@ -23,6 +23,7 @@ const user = computed(() => user_store.user)
         {{ user.User_email }}
       </div>
     </div>
+    <TheKey />
   </div>
 </template>
 
