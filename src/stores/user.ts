@@ -55,15 +55,15 @@ export const useUserStore = defineStore('user', () => {
 
   async function update_public_keys() {
     try {
-      await axios.patch(`${api_url}/users/me/keypairs`, {
+      const response = await axios.patch(`${api_url}/users/public_keys`, {
         encryption_public_key: encryption_store.encryption_keypair?.publicKey,
         signing_public_key: encryption_store.signing_keypair?.publicKey,
       }, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
-      }).then((response) => {
-        user.value = response.data as IUser
       })
+
+      user.value = response.data as IUser
     }
     catch (error) {
       if (axios.isAxiosError(error)) {

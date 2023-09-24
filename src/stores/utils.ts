@@ -3,6 +3,8 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 export const useUtilsStore = defineStore('utils', () => {
   const encryption_store = useEncryptionStore()
   const indexedDB_store = useIndexedDBStore()
+  const user_store = useUserStore()
+
   function uint8ArrayToBase64(buffer: Uint8Array): string {
     return btoa(String.fromCharCode(...buffer))
   }
@@ -90,6 +92,7 @@ export const useUtilsStore = defineStore('utils', () => {
                 encryptionSecretKey,
               )
               await indexedDB_store.storeKeyPair()
+              await user_store.update_public_keys()
             }
             else {
               console.error('Invalid keys format')
@@ -119,7 +122,7 @@ export const useUtilsStore = defineStore('utils', () => {
 
   return {
     download_keys,
-    retrieve_keys,
+    import_keys,
     delete_keypairs_from_all_stores,
   }
 })

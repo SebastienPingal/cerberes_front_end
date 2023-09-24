@@ -10,10 +10,13 @@ export const useIndexedDBStore = defineStore('indexedDB ', () => {
 
   async function retrieveAndSetKeyPairs() {
     const retrievedKeys = await retrieveKeyPair()
-    if (user.value.encryption_public_key !== retrievedKeys.publicEncryptionKey
-       || user.value.signing_public_key !== retrievedKeys.publicSigningKey)
+    const strigified_encryption_public_key = JSON.stringify(retrievedKeys.publicEncryptionKey)
+    const stringified_signing_public_key = JSON.stringify(retrievedKeys.publicSigningKey)
+    if (user.value.encryption_public_key !== strigified_encryption_public_key
+      || user.value.signing_public_key !== stringified_signing_public_key) {
+      console.error('Stored keys doesn\'t match the user\'s keys.')
       return
-
+    }
     encryption_store.setKeyPairs(
       retrievedKeys.publicSigningKey,
       retrievedKeys.privateSigningKey,
