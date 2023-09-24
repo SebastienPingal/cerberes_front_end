@@ -43,7 +43,7 @@ export const useUtilsStore = defineStore('utils', () => {
     return true
   }
 
-  function retrieve_keys() {
+  function import_keys() {
     const fileInput = document.createElement('input')
     fileInput.type = 'file'
     fileInput.accept = 'application/json,text/plain'

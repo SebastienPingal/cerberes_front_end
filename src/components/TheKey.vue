@@ -29,7 +29,7 @@ const encryption_keypair = computed(() => encryption_store.encryption_keypair)
           <o-button @click="display_generator = true">
             Generate it
           </o-button>
-          <o-button @click="utils_store.retrieve_keys">
+          <o-button @click="utils_store.import_keys">
             Import it
           </o-button>
         </div>
