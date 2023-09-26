@@ -24,6 +24,7 @@ export interface IContact {
 export interface IConversation {
   Conversation_id: number
   Users: IUser[]
+  Messages?: IMessage[]
 }
 
 export interface IUserConversation {
