@@ -6,8 +6,9 @@ const user = computed(() => user_store.user)
 
 <template>
   <div>
-    <div v-if="user.Conversations">
+    <div v-if="user.Conversations.length">
       <TheConversation v-for="conversation in user.Conversations" :key="conversation.Conversation_id" :conversation="conversation" />
+      <TheMessageList />
     </div>
     <div
       v-else
