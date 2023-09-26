@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import axios from 'axios'
-import type { IContact, IConversation, IUser } from '../types'
+import type { IUser } from '../types'
 
 export const useUserStore = defineStore('user', () => {
   const api_url = import.meta.env.VITE_API_URL
@@ -12,6 +12,27 @@ export const useUserStore = defineStore('user', () => {
       write: (v: any) => JSON.stringify(v),
     },
   }))
+
+  async function register(User_name: string, User_email: string, User_password: string) {
+    try {
+      await axios.post(`${api_url}/auth/register`, {
+        User_name,
+        User_email,
+        User_password,
+      }, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      }).then((response) => {
+        user.value = response.data as IUser
+      })
+    }
+    catch (error) {
+      if (axios.isAxiosError(error))
+        throw new Error(error.response?.data)
+      else
+        console.error(error)
+    }
+  }
 
   async function login(User_email: string, User_password: string) {
     try {
@@ -55,14 +76,15 @@ export const useUserStore = defineStore('user', () => {
 
   async function update_public_keys() {
     try {
+      const stringified_encryption_public_key = JSON.stringify(encryption_store.encryption_keypair?.publicKey)
+      const stringified_signing_public_key = JSON.stringify(encryption_store.signing_keypair?.publicKey)
       const response = await axios.patch(`${api_url}/users/public_keys`, {
-        encryption_public_key: encryption_store.encryption_keypair?.publicKey,
-        signing_public_key: encryption_store.signing_keypair?.publicKey,
+        encryption_public_key: stringified_encryption_public_key,
+        signing_public_key: stringified_signing_public_key,
       }, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       })
-
       user.value = response.data as IUser
     }
     catch (error) {
@@ -81,9 +103,8 @@ export const useUserStore = defineStore('user', () => {
       await axios.post(`${api_url}/contacts?uuid=${contact_uuid}`, {}, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
-      }).then((response) => {
-        user.value.contact_list.push(response.data as IContact)
       })
+      await get_user()
     }
     catch (error) {
       if (axios.isAxiosError(error)) {
@@ -96,27 +117,6 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  async function register(User_name: string, User_email: string, User_password: string) {
-    try {
-      await axios.post(`${api_url}/auth/register`, {
-        User_name,
-        User_email,
-        User_password,
-      }, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      }).then((response) => {
-        user.value = response.data as IUser
-      })
-    }
-    catch (error) {
-      if (axios.isAxiosError(error))
-        throw new Error(error.response?.data)
-      else
-        console.error(error)
-    }
-  }
-
   async function create_conversation(members_id: number[]) {
     try {
       await axios.post(`${api_url}/conversations`, {
@@ -124,9 +124,8 @@ export const useUserStore = defineStore('user', () => {
       }, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
-      }).then((response) => {
-        user.value.conversations.push(response.data as IConversation)
       })
+      await get_user()
     }
     catch (error) {
       if (axios.isAxiosError(error)) {
