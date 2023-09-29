@@ -12,17 +12,19 @@ function send_message() {
 
 <template>
   <div class="border p-2">
-    <div v-if="conversation_store.selected_conversation?.Messages" class="p-2">
+    <div v-if="conversation_store.selected_conversation?.Messages" class="p-2 flex flex-col gap-2">
       <TheMessage
         v-for="message in conversation_store.selected_conversation.Messages" :key="message.Message_id"
         :message="message"
       />
+      <TheInput />
     </div>
     <div v-else class="flex flex-col gap-2">
       <div class="">
         No messages yet, start a conversation!
       </div>
       <label class="flex flex-col gap-1" />
+      <TheInput />
       <textarea
         ref="textarea" v-model="input"
         class="w-full resize-none overflow-hidden border-2 border-blue-400 border-dashed bg-white p-2 text-blue-400 focus:border-solid dark:bg-black focus:outline-none"
