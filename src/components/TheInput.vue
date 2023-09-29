@@ -16,7 +16,7 @@ function send_message() {
   <textarea
     v-model="modelValue"
     v-bind="$attrs"
-    class="w-full resize-none overflow-hidden border-2 border-blue-400 border-dashed bg-white p-2 text-blue-400 focus:border-solid dark:bg-black focus:outline-none"
+    class="placeholder-blue-900 w-full resize-none overflow-hidden border-2 border-blue-400 border-dashed bg-white p-2 text-blue-400 focus:border-solid dark:bg-dark-9 focus:outline-none"
     placeholder="Type a message..."
     @keydown.enter="send_message"
   />

@@ -11,15 +11,15 @@ const user = computed(() => user_store.user)
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-3">
+  <div class="flex flex-col items-center gap-3 w-max-screen">
     <div v-if="!user">
       <TheLogin v-if="display_store.login" />
       <TheRegister v-if="display_store.register" />
     </div>
-    <div v-else>
-      <div v-if="encryption_store.signing_keypair && encryption_store.encryption_keypair" class="flex flex-col gap-3">
+    <div v-else class="w-full">
+      <div v-if="encryption_store.signing_keypair && encryption_store.encryption_keypair" class="flex gap-3 w-full">
         <TheConversationList />
-        <TheMessageList v-if="conversation_store.selected_conversation" />
+        <TheMessageList v-if="conversation_store.selected_conversation" class="w-full"/>
       </div>
       <div v-else>
         <TheKey />

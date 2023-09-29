@@ -35,7 +35,7 @@ export interface IUserConversation {
 
 export interface IMessage {
   Message_id: number
-  Conversation_id: number
+  Conversation_id: numbedarkr
   Sender_id: number
   Message_content: string
   createdAt: string

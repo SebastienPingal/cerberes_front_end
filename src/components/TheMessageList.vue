@@ -12,10 +12,11 @@ function send_message() {
 
 <template>
   <div class="border p-2">
-    <div v-if="conversation_store.selected_conversation?.Messages" class="p-2 flex flex-col gap-2">
+    <div v-if="conversation_store.selected_conversation?.Messages" class="p-2 flex flex-col gap-4">
       <TheMessage
         v-for="message in conversation_store.selected_conversation.Messages" :key="message.Message_id"
         :message="message"
+        class="px-10"
       />
       <TheInput />
     </div>
