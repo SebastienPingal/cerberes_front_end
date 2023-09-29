@@ -5,6 +5,7 @@ import type { IUser } from '../types'
 export const useUserStore = defineStore('user', () => {
   const api_url = import.meta.env.VITE_API_URL
   const encryption_store = useEncryptionStore()
+  const conversation_store = useConversationStore()
 
   const user = ref(useStorage('curent_user', <IUser | null>null, undefined, {
     serializer: {
@@ -61,6 +62,7 @@ export const useUserStore = defineStore('user', () => {
         withCredentials: true,
       }).then((response) => {
         user.value = response.data as IUser
+        conversation_store.conversations = user.value.Conversations
       })
     }
     catch (error) {
