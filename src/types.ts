@@ -38,7 +38,7 @@ export interface IMessage {
   Conversation_id: number
   Sender_id: number
   Message_content: string
-  created_at: string
+  createdAt: string
 }
 
 export type UserModule = (ctx: ViteSSGContext) => void
