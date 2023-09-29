@@ -68,7 +68,7 @@ export const useUserStore = defineStore('user', () => {
     catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401)
-          user.value = null
+          logout()
         else
           throw new Error(error.response?.data)
       }
@@ -92,7 +92,7 @@ export const useUserStore = defineStore('user', () => {
     catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401)
-          user.value = null
+          logout()
         else
           throw new Error(error.response?.data)
       }
@@ -111,7 +111,7 @@ export const useUserStore = defineStore('user', () => {
     catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401)
-          user.value = null
+          logout()
         else
           throw new Error(error.response?.data)
       }
@@ -132,7 +132,7 @@ export const useUserStore = defineStore('user', () => {
     catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401)
-          user.value = null
+          logout()
         else
           throw new Error(error.response?.data)
       }
