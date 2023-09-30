@@ -19,6 +19,7 @@ declare module 'vue' {
     TheConversationList: typeof import('./components/TheConversationList.vue')['default']
     TheConversations: typeof import('./components/TheConversations.vue')['default']
     TheCounter: typeof import('./components/TheCounter.vue')['default']
+    TheDignifiedPlaceholder: typeof import('./components/TheDignifiedPlaceholder.vue')['default']
     TheFooter: typeof import('./components/TheFooter.vue')['default']
     TheHeader: typeof import('./components/TheHeader.vue')['default']
     TheInput: typeof import('./components/TheInput.vue')['default']
