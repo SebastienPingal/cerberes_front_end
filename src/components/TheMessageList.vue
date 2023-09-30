@@ -38,10 +38,11 @@ onMounted(async () => {
       </div>
       <TheInput class="w-full flex" />
     </div>
-    <div v-else class="flex flex-col gap-2 striped-background h-full w-full items-center place-content-center">
-      <div class="dark:bg-dark-9 w-fit p-8 bg-white rounded-xl text-xl">
+    <div v-else class="relative flex flex-col gap-2 h-full w-full items-center place-content-center">
+      <div class="dark:bg-dark-9 w-fit p-8 bg-white rounded-xl text-xl z-10">
         No conversation selected, select a conversation!
       </div>
+      <TheDignifiedPlaceholder class="absolute top-0 bottom-0 right-0 left-0 text-white"/>
     </div>
   </div>
 </template>
