@@ -1,44 +1,40 @@
 <script setup lang="ts">
-const { textarea, input } = useTextareaAutosize()
 const conversation_store = useConversationStore()
 
-function send_message() {
-  if (input.value) {
-    conversation_store.send_message(input.value)
-    input.value = ''
-  }
-}
 </script>
 
 <template>
-  <div class="border p-2">
-    <div v-if="conversation_store.selected_conversation?.Messages" class="p-2 flex flex-col gap-4">
-      <TheMessage
-        v-for="message in conversation_store.selected_conversation.Messages" :key="message.Message_id"
-        :message="message"
-        class="px-10"
-      />
-      <TheInput />
-    </div>
-    <div v-else class="flex flex-col gap-2">
-      <div class="">
-        No messages yet, start a conversation!
+  <div class="border p-4 overflow-hidden rounded-md flex flex-col" style="height: calc(100vh - 200px)">
+    <div v-if="conversation_store.selected_conversation" class="flex flex-col h-full">
+      <div v-if="conversation_store.selected_conversation?.Messages" class="flex flex-col gap-4 overflow-auto mb-4"
+        style="flex: 1">
+        <div class="px-10 flex flex-col gap-4">
+          <TheMessage v-for="message in conversation_store.selected_conversation.Messages" :key="message.Message_id"
+            :message="message" />
+        </div>
       </div>
-      <label class="flex flex-col gap-1" />
-      <TheInput />
-      <textarea
-        ref="textarea" v-model="input"
-        class="w-full resize-none overflow-hidden border-2 border-blue-400 border-dashed bg-white p-2 text-blue-400 focus:border-solid dark:bg-black focus:outline-none"
-        placeholder="Type a message..."
-        @keydown.enter="send_message"
-      />
-      <button
-        v-if="input"
-        class="rounded-md bg-white text-white transition-all dark:bg-black  dark:text-white hover:text-white focus:outline-none dark:hover:text-white box-content border-2 border-blue-900 hover:border-blue-400 p-2"
-        @click="send_message"
-      >
-        Send
-      </button>
+      <div v-else class="flex flex-col gap-2">
+        <div class="">
+          No messages yet, start a conversation!
+        </div>
+      </div>
+      <TheInput class="w-full flex" />
+    </div>
+    <div v-else class="flex flex-col gap-2 striped-background h-full w-full items-center place-content-center">
+      <div class="dark:bg-dark-9 w-fit p-8 bg-white rounded-xl text-xl">
+        No conversation selected, select a conversation!
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.striped-background {
+  background: repeating-linear-gradient(45deg,
+      transparent,
+      transparent 10px,
+      white 11px,
+      white 1px);
+  background-color: rgba(0, 0, 0, 0.1);
+}
+</style>
