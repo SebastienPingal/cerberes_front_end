@@ -11,7 +11,7 @@ const conversation_store = useConversationStore()
 <template>
   <div
     class="btn-contact place-self-start"
-    @click="conversation_store.set_selected_conversation(props.conversation.Conversation_id)"
+    @click="conversation_store.selected_conversation_id = props.conversation.Conversation_id"
   >
     {{ props.conversation.Users[0].User_name }}
   </div>

@@ -24,6 +24,7 @@ export interface IContact {
 export interface IConversation {
   Conversation_id: number
   Users: IUser[]
+  Demands?: boolean
   Messages?: IMessage[]
 }
 
@@ -35,8 +36,9 @@ export interface IUserConversation {
 
 export interface IMessage {
   Message_id: number
-  Conversation_id: numbedarkr
+  Conversation_id: number
   Sender_id: number
+  new?: boolean
   Message_content: string
   createdAt: string
 }
