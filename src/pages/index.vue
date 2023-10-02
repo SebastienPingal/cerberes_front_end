@@ -5,7 +5,6 @@ defineOptions({
 
 const display_store = useDisplayStore()
 const encryption_store = useEncryptionStore()
-const conversation_store = useConversationStore()
 const user_store = useUserStore()
 const user = computed(() => user_store.user)
 </script>
