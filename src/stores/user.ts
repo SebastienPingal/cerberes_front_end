@@ -57,13 +57,12 @@ export const useUserStore = defineStore('user', () => {
 
   async function get_user() {
     try {
-      await axios.get(`${api_url}/users/me`, {
+      const response = await axios.get(`${api_url}/users/me`, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
-      }).then((response) => {
-        user.value = response.data as IUser
-        conversation_store.conversations = user.value.Conversations
       })
+      user.value = response.data as IUser
+      await conversation_store.get_all_new_messages()
     }
     catch (error) {
       if (axios.isAxiosError(error)) {

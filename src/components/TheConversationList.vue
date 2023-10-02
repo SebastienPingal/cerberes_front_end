@@ -1,13 +1,12 @@
 <script setup lang="ts">
-const user_store = useUserStore()
 const display_store = useDisplayStore()
-const user = computed(() => user_store.user)
+const conversation_store = useConversationStore()
 </script>
-
+)
 <template>
   <div>
-    <div v-if="user.Conversations.length">
-      <TheConversation v-for="conversation in user.Conversations" :key="conversation.Conversation_id" :conversation="conversation" />
+    <div v-if="conversation_store.conversations.length">
+      <TheConversation v-for="conversation in conversation_store.conversations" :key="conversation.Conversation_id" :conversation="conversation" />
     </div>
     <div
       v-else

@@ -12,9 +12,13 @@ export const useConversationStore = defineStore('conversation', () => {
 
   const selected_conversation_id = ref(0)
   const selected_conversation: Ref<IConversation | null> = computed(() => {
-    return conversations.value?.find(
+    if (!selected_conversation_id.value)
+      return null
+    if (!conversations.value)
+      return null
+    return conversations.value.find(
       (conversation: IConversation) => conversation.Conversation_id === selected_conversation_id.value,
-    ) ?? null
+    ) ?? []
   })
 
   const api_url = import.meta.env.VITE_API_URL
@@ -64,30 +68,26 @@ export const useConversationStore = defineStore('conversation', () => {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       })
-      const new_messages = response_get_messages.data
+      const conversations_with_new_messages: IConversation[] = response_get_messages.data
       const decrypted_messages_id: number[] = []
+      if (!conversations_with_new_messages.length)
+        return
 
-      new_messages.forEach((new_message: IMessage) => {
-        // ! decrypt message here and check if it's valid
+      conversations_with_new_messages.forEach((that_conversation: IConversation) => {
+        that_conversation.Messages?.forEach((that_message: IMessage) => {
+          // ! decrypt message here and check if it's valid
+          decrypted_messages_id.push(that_message.Message_id)
+        })
 
-        decrypted_messages_id.push(new_message.Message_id)
-        new_message.new = true // TODO: handle new messages
-        const conversation: IConversation = conversations.value?.find(
-          (conversation: IConversation) => conversation.Conversation_id === new_message.Conversation_id,
-        )
-        if (conversation) {
-          conversation.Messages?.push(new_message)
-          conversation.Messages?.sort((a: IMessage, b: IMessage) => {
-            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          })
-        }
-        else {
-          conversations.value?.push({
-            Conversation_id: new_message.Conversation_id,
-            Messages: [new_message],
-            Demands: true, // TODO: handle demands
-          })
-        }
+        const concerned_conversation = conversations.value?.find((conversation: IConversation) => {
+          return conversation.Conversation_id === that_conversation.Conversation_id
+        })
+
+        if (!concerned_conversation)
+          conversations.value?.push(that_conversation)
+
+        else
+          concerned_conversation.Messages?.push(that_conversation.Messages)
       })
 
       // delete messages from server
