@@ -1,34 +1,32 @@
 <script setup lang="ts">
 import type { IContact } from '../types'
 
-const display_store = useDisplayStore()
 const user_store = useUserStore()
+const user = computed(() => user_store.user)
+const display_store = useDisplayStore()
+const conversation_store = useConversationStore()
 const error_message = ref('')
 
 async function create_conversation_with(contact: IContact) {
   error_message.value = ''
-  const members_id = [contact.Contact_User_id]
-  try {
-    await user_store.create_conversation(members_id)
-  }
-  catch (error) {
-    const typed_error = error as string
-    error_message.value = typed_error
-    return
-  }
+  const foundContact = user.value.contact_list.find((c: IContact) => c.Contact_User_id === contact.Contact_User_id);
+  const member = [foundContact.User];
+  conversation_store.create_conversation(member);
+
   display_store.conversation_creator = false
 }
 </script>
 
 <template>
-  <div class="fixed left-0 top-0 z-10 h-full w-full bg-black bg-opacity-50 backdrop-blur" />
-  <div class="fixed top-1/3 z-10 border border-1 rounded bg-white p-4 dark:bg-black">
-    <o-button
-      class="mb-3 w-fit flex place-self-end rounded-full px-2 py-1" type="info" light
-      @click="display_store.conversation_creator = false"
-    >
-      <div i-carbon-close-large />
-    </o-button>
+  <div class="fixed left-0 top-0 z-20 h-full w-full bg-black bg-opacity-50 backdrop-blur" />
+  <div
+    class="fixed top-1/2 left-1/2 w-100 transform -translate-x-1/2 -translate-y-1/2 z-20 border border-1 rounded-md bg-white p-4 dark:bg-black">
+    <div class="flex place-content-end">
+      <o-button class="mb-3 items-center flex rounded-full p-0" type="info" light
+        @click="display_store.conversation_creator = false">
+        <o-icon i-carbon-close class="h-7 w-7" />
+      </o-button>
+    </div>
     <div class="flex flex-col gap-5">
       <h4 class="text-xl">
         With who ?

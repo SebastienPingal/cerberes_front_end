@@ -1,24 +1,24 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import type { IConversation, IMessage } from '~/types'
+import type { IConversation, IMessage, IUser } from '~/types'
 
 export const useConversationStore = defineStore('conversation', () => {
-  const conversations = ref(useStorage('curent_user', <IConversation[] | null>null, undefined, {
+  const conversations = ref(useStorage('conversations', <IConversation[] | []>[], undefined, {
     serializer: {
       read: (v: any) => v ? JSON.parse(v) : null,
       write: (v: any) => JSON.stringify(v),
     },
   }))
 
-  const selected_conversation_id = ref(0)
+  const selected_conversation_id: Ref<number | null> = ref(null)
   const selected_conversation: Ref<IConversation | null> = computed(() => {
-    if (!selected_conversation_id.value)
+    if (selected_conversation_id.value === null)
       return null
     if (!conversations.value)
       return null
     return conversations.value.find(
       (conversation: IConversation) => conversation.Conversation_id === selected_conversation_id.value,
-    ) ?? []
+    ) ?? null
   })
 
   const api_url = import.meta.env.VITE_API_URL
@@ -30,26 +30,47 @@ export const useConversationStore = defineStore('conversation', () => {
       return
     }
     try {
-      conversations.value.find((conversation: IConversation) => {
-        return conversation.Conversation_id === selected_conversation_id.value
-      })?.Messages?.push({
+      const complete_message: IMessage = {
+        Sender_id: user_store.user.User_id,
         Message_id: 0,
         Conversation_id: selected_conversation.value.Conversation_id,
         Message_content: message,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      })
+      }
+
+      if (selected_conversation.value.Conversation_id !== 0) {
+        conversations.value.find((conv: IConversation) => {
+          return conv.Conversation_id === selected_conversation_id.value
+        })?.Messages.push(complete_message)
+      }
+      else {
+        if (!selected_conversation.value.Users)
+          throw new Error('No users in conversation')
+        const members_id: number[] = selected_conversation.value.Users.map((user: IUser) => user.User_id)
+        const the_conversation = conversations.value.find((conv: IConversation) => {
+          const users_id = conv.Users?.map((user: IUser) => user.User_id)
+          return users_id?.every(id => members_id.includes(id))
+        })
+        if (!the_conversation)
+          throw new Error('No conversation found')
+        the_conversation.Messages.push(complete_message)
+      }
 
       // ! encrypt message here
 
+      const conversation_without_messages = { ...selected_conversation.value }
+      delete conversation_without_messages.Messages
+
       const response = await axios.post(`${api_url}/messages`, {
-        Conversation_id: selected_conversation.value.Conversation_id,
+        Conversation: conversation_without_messages,
         Message_content: message,
       }, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       })
-      selected_conversation.value.Messages?.push(response.data)
+      if (response.status !== 201)
+        throw new Error('Message not sent')
+
       get_all_new_messages()
     }
     catch (error) {
@@ -62,9 +83,41 @@ export const useConversationStore = defineStore('conversation', () => {
     }
   }
 
+  async function create_conversation(members: IUser[]) {
+    try {
+      if (!members.length)
+        throw new Error('No members in conversation')
+      if (!conversations.value)
+        throw new Error('No conversations')
+      // if already exist throw error
+      const that_conversation = conversations.value.find((conversation: IConversation) => {
+        return conversation.Users?.find((user: IUser) => {
+          return members.find((member: IUser) => {
+            return user.User_id === member.User_id
+          })
+        })
+      })
+
+      if (that_conversation)
+        throw new Error('Conversation already exist')
+
+      conversations.value.push({
+        Conversation_id: 0,
+        Users: members,
+        Messages: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+    }
+    catch (error) {
+      const typed_error = error as Error
+      throw new Error(typed_error.message)
+    }
+  }
+
   async function get_all_new_messages() {
     try {
-      const response_get_messages = await axios.get(`${api_url}/messages`, {
+      const response_get_messages = await axios.get(`${api_url}/conversations`, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       })
@@ -79,16 +132,38 @@ export const useConversationStore = defineStore('conversation', () => {
           decrypted_messages_id.push(that_message.Message_id)
         })
 
-        const concerned_conversation = conversations.value?.find((conversation: IConversation) => {
-          return conversation.Conversation_id === that_conversation.Conversation_id
+        // find conversation with id
+        const concerned_conversation = conversations.value?.find((conv: IConversation) => {
+          return conv.Conversation_id === that_conversation.Conversation_id
         })
 
-        if (!concerned_conversation)
-          conversations.value?.push(that_conversation)
+        if (!concerned_conversation) {
+          const members_id = that_conversation.Users?.map((user: IUser) => user.User_id)
 
-        else
-          concerned_conversation.Messages?.push(that_conversation.Messages)
+          // check if it is a conversation that as not been pushed yet
+          const unidentified_conversation = conversations.value.find((conv: IConversation) => {
+            const convUsersId = conv.Users?.map((user: IUser) => user.User_id)
+            return JSON.stringify(convUsersId?.sort()) === JSON.stringify(members_id?.sort())
+          })
+          if (unidentified_conversation) {
+            unidentified_conversation.Conversation_id = that_conversation.Conversation_id
+            if (unidentified_conversation.Messages && that_conversation.Messages)
+              unidentified_conversation.Messages.push(...that_conversation.Messages)
+          }
+          else {
+            conversations.value?.push(that_conversation)
+          }
+        }
+        else { concerned_conversation.Messages?.push(...that_conversation.Messages!) }
+        conversations.value.forEach((conv: IConversation) => {
+          conv.Messages?.sort((a: IMessage, b: IMessage) => {
+            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          })
+        })
       })
+
+      if (!decrypted_messages_id.length)
+        return
 
       // delete messages from server
       await axios.delete(`${api_url}/messages?ids=${decrypted_messages_id.join(',')}`, {
@@ -111,6 +186,7 @@ export const useConversationStore = defineStore('conversation', () => {
   return {
     send_message,
     get_all_new_messages,
+    create_conversation,
     selected_conversation,
     selected_conversation_id,
     conversations,
