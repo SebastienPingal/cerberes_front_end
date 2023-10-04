@@ -3,12 +3,18 @@ import axios from 'axios'
 import type { IConversation, IMessage, IUser } from '~/types'
 
 export const useConversationStore = defineStore('conversation', () => {
-  const conversations = ref(useStorage('conversations', <IConversation[] | []>[], undefined, {
-    serializer: {
-      read: (v: any) => v ? JSON.parse(v) : null,
-      write: (v: any) => JSON.stringify(v),
-    },
-  }))
+  const user_store = useUserStore()
+  const api_url = import.meta.env.VITE_API_URL
+  const storage_key = computed(() => user_store.user.User_id.toString() ?? 'default')
+
+  const conversations = computed(() => {
+    return useStorage(`conversations_${storage_key.value}`, <IConversation[] | []>[], undefined, {
+      serializer: {
+        read: (v: any) => v ? JSON.parse(v) : null,
+        write: (v: any) => JSON.stringify(v),
+      },
+    }).value
+  })
 
   const selected_conversation_id: Ref<number | null> = ref(null)
   const selected_conversation: Ref<IConversation | null> = computed(() => {
@@ -20,9 +26,6 @@ export const useConversationStore = defineStore('conversation', () => {
       (conversation: IConversation) => conversation.Conversation_id === selected_conversation_id.value,
     ) ?? null
   })
-
-  const api_url = import.meta.env.VITE_API_URL
-  const user_store = useUserStore()
 
   async function send_message(message: string) {
     if (!selected_conversation.value) {
@@ -187,6 +190,7 @@ export const useConversationStore = defineStore('conversation', () => {
     send_message,
     get_all_new_messages,
     create_conversation,
+    storage_key,
     selected_conversation,
     selected_conversation_id,
     conversations,
