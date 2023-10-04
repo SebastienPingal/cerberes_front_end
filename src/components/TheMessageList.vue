@@ -46,14 +46,3 @@ onMounted(async () => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.striped-background {
-  background: repeating-linear-gradient(45deg,
-      transparent,
-      transparent 10px,
-      white 11px,
-      white 1px);
-  background-color: rgba(0, 0, 0, 0.1);
-}
-</style>
