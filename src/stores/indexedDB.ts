@@ -5,10 +5,8 @@ export const useIndexedDBStore = defineStore('indexedDB ', () => {
   const user_store = useUserStore()
   const user = computed(() => user_store.user)
   const dbName = 'KeyDatabase'
-  const storeName = 'keys'
+  const storeName = `${user_store.user.User_id}keys`
   let db: IDBDatabase | null = null
-
-  // TODO : debug the error in the console when delting then importing key et vice versa
 
   async function retrieveAndSetKeyPairs() { // TODO: mode this to utils store
     const retrievedKeys = await retrieveKeyPair()
