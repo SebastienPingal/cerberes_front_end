@@ -45,6 +45,7 @@ export const useUserStore = defineStore('user', () => {
         withCredentials: true,
       }).then((response) => {
         user.value = response.data as IUser
+        conversation_store.get_all_new_messages()
       })
     }
     catch (error) {
