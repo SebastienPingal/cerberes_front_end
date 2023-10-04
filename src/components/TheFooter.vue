@@ -22,11 +22,11 @@ async function toggleLocales() {
       <div i="carbon-sun dark:carbon-moon" />
     </button>
 
-    <a icon-btn :title="t('button.toggle_langs')" @click="toggleLocales()">
+    <!-- <a icon-btn :title="t('button.toggle_langs')" @click="toggleLocales()">
       <div i-carbon-language />
-    </a>
+    </a> -->
 
-    <a icon-btn rel="noreferrer" href="https://github.com/antfu/vitesse" target="_blank" title="GitHub">
+    <a icon-btn rel="noreferrer" href="https://github.com/SebastienPingal/cerberes_front_end" target="_blank" title="GitHub">
       <div i-carbon-logo-github />
     </a>
   </nav>
