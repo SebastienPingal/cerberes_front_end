@@ -34,6 +34,12 @@ onMounted(async () => {
   await indexedDB_store.retrieveAndSetKeyPairs()
   await user_store.get_user()
 })
+
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    indexedDB_store.close()
+  }
+})
 </script>
 
 <template>
