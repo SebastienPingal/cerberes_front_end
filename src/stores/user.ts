@@ -6,6 +6,7 @@ export const useUserStore = defineStore('user', () => {
   const api_url = import.meta.env.VITE_API_URL
   const encryption_store = useEncryptionStore()
   const conversation_store = useConversationStore()
+  const indexedDB_store = useIndexedDBStore()
 
   const user = ref(useStorage('curent_user', <IUser | null>null, undefined, {
     serializer: {
@@ -37,16 +38,16 @@ export const useUserStore = defineStore('user', () => {
 
   async function login(User_email: string, User_password: string) {
     try {
-      await axios.post(`${api_url}/auth/login`, {
+      const response = await axios.post(`${api_url}/auth/login`, {
         User_email,
         User_password,
       }, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
-      }).then((response) => {
-        user.value = response.data as IUser
-        conversation_store.get_all_new_messages()
       })
+      user.value = response.data as IUser
+      await indexedDB_store.retrieveAndSetKeyPairs()
+      conversation_store.get_all_new_messages()
     }
     catch (error) {
       if (axios.isAxiosError(error))
@@ -78,11 +79,9 @@ export const useUserStore = defineStore('user', () => {
 
   async function update_public_keys() {
     try {
-      const stringified_encryption_public_key = JSON.stringify(encryption_store.encryption_keypair?.publicKey)
-      const stringified_signing_public_key = JSON.stringify(encryption_store.signing_keypair?.publicKey)
       const response = await axios.patch(`${api_url}/users/public_keys`, {
-        encryption_public_key: stringified_encryption_public_key,
-        signing_public_key: stringified_signing_public_key,
+        encryption_public_key: encryption_store.encryption_keypair?.publicKey,
+        signing_public_key: encryption_store.signing_keypair?.publicKey,
       }, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,

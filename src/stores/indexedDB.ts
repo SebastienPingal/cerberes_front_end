@@ -3,12 +3,17 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 export const useIndexedDBStore = defineStore('indexedDB ', () => {
   const encryption_store = useEncryptionStore()
   const user_store = useUserStore()
+  const utils_store = useUtilsStore()
   const user = computed(() => user_store.user)
   const dbName = 'KeyDatabase'
   const storeName = 'keys'
   let db: IDBDatabase | null = null
 
   async function retrieveAndSetKeyPairs() { // TODO: mode this to utils store
+    if (!user.value) {
+      console.error('No user found.')
+      return
+    }
     const retrievedKeys = await retrieveKeyPair()
     if (!retrievedKeys) {
       console.error('No keys found in IndexedDB.')
@@ -18,11 +23,8 @@ export const useIndexedDBStore = defineStore('indexedDB ', () => {
       console.error('No keys found in user.')
       return
     }
-    const encryption_public_key_array = Object.values(user.value.encryption_public_key).map(Number)
-    const encryption_public_key_uint8 = new Uint8Array(encryption_public_key_array)
-
-    const signing_public_key_array = Object.values(user.value.signing_public_key).map(Number)
-    const signing_public_key_uint8 = new Uint8Array(signing_public_key_array)
+    const encryption_public_key_uint8 = utils_store.convert_object_to_uint8array(user.value.encryption_public_key)
+    const signing_public_key_uint8 = utils_store.convert_object_to_uint8array(user.value.signing_public_key)
 
     if (!encryption_public_key_uint8.every((value, index) => value === retrievedKeys.publicEncryptionKey[index])
       || !signing_public_key_uint8.every((value, index) => value === retrievedKeys.publicSigningKey[index])) {
