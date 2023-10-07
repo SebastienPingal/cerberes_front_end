@@ -120,12 +120,19 @@ export const useUtilsStore = defineStore('utils', () => {
     await indexedDB_store.delete_indexedDB_keypair()
   }
 
+  function convert_object_to_uint8array(object: any): Uint8Array {
+    const array = Object.values(object).map(Number)
+    const uit8 = new Uint8Array(array)
+    return uit8
+  }
+
   return {
     download_keys,
     import_keys,
     delete_keypairs_from_all_stores,
+    convert_object_to_uint8array,
   }
 })
 
 if (import.meta.hot)
-  import.meta.hot.accept(acceptHMRUpdate(useUserStore as any, import.meta.hot))
+  import.meta.hot.accept(acceptHMRUpdate(useUtilsStore as any, import.meta.hot))
