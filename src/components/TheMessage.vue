@@ -28,7 +28,7 @@ const translate_to_relative_date = (date: string) => {
     <div
       class="border-dashed border-blue-300 border rounded-tl-xl rounded-tr-xl rounded-bl-xl text-blue-300 w-fit py-1 px-4"
       :class="is_user_sender ? 'place-self-end' : 'place-self-start'">
-      {{ message.Message_content }}
+      {{ message.Message_content_decrypted }}
     </div>
     <div class="text-xs flex place-self-end pr-5">
       {{ translate_to_relative_date(message.createdAt) }}

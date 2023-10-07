@@ -1,3 +1,4 @@
+import { type Buffer } from 'node:buffer'
 import { type ViteSSGContext } from 'vite-ssg'
 
 export interface IUser {
@@ -6,8 +7,8 @@ export interface IUser {
   User_email: string
   User_password?: string
   User_contact_uuid?: string
-  encryption_public_key?: string
-  signing_public_key?: string
+  encryption_public_key?: Uint8Array
+  signing_public_key?: Uint8Array
   contact_list?: IContact[]
 }
 
@@ -15,10 +16,7 @@ export interface IContact {
   Contact_id: number
   User_id: number
   Contact_User_id: number
-  User: {
-    User_name: string
-    PGP_PublicKey: string
-  }
+  User: IUser
 }
 
 export interface IConversation {
@@ -39,7 +37,9 @@ export interface IMessage {
   Conversation_id: number
   Sender_id: number
   new?: boolean
-  Message_content: string
+  Message_content?: Buffer
+  Message_content_decrypted?: string
+  Nonce?: Buffer
   createdAt: string
 }
 

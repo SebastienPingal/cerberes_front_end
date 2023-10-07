@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 import axios from 'axios'
 import type { IConversation, IMessage, IUser } from '~/types'
 
@@ -6,6 +6,8 @@ export const useConversationStore = defineStore('conversation', () => {
   const user_store = useUserStore()
   const api_url = import.meta.env.VITE_API_URL
   const storage_key = computed(() => user_store.user.User_id.toString() ?? 'default')
+  const encryption_store = useEncryptionStore()
+  const utils_store = useUtilsStore()
 
   const conversations = computed(() => {
     return useStorage(`conversations_${storage_key.value}`, <IConversation[] | []>[], undefined, {
@@ -15,7 +17,6 @@ export const useConversationStore = defineStore('conversation', () => {
       },
     }).value
   })
-
   const selected_conversation_id: Ref<number | null> = ref(null)
   const selected_conversation: Ref<IConversation | null> = computed(() => {
     if (selected_conversation_id.value === null)
@@ -33,11 +34,15 @@ export const useConversationStore = defineStore('conversation', () => {
       return
     }
     try {
+      if (!selected_conversation.value.Users || !selected_conversation.value.Users[0].encryption_public_key) {
+        console.error('no encryption key for the User')
+        return
+      }
       const complete_message: IMessage = {
         Sender_id: user_store.user.User_id,
         Message_id: 0,
         Conversation_id: selected_conversation.value.Conversation_id,
-        Message_content: message,
+        Message_content_decrypted: message,
         createdAt: new Date().toISOString(),
       }
 
@@ -59,14 +64,19 @@ export const useConversationStore = defineStore('conversation', () => {
         the_conversation.Messages.push(complete_message)
       }
 
-      // ! encrypt message here
-
       const conversation_without_messages = { ...selected_conversation.value }
       delete conversation_without_messages.Messages
+      const uint8_recipient_public_encryption_key = utils_store.convert_object_to_uint8array(selected_conversation.value.Users[0].encryption_public_key)
+
+      const encrypted_message = encryption_store.signAndEncryptMessage(
+        message,
+        uint8_recipient_public_encryption_key,
+      )
 
       const response = await axios.post(`${api_url}/messages`, {
         Conversation: conversation_without_messages,
-        Message_content: message,
+        Message_content: encrypted_message.encryptedMessage,
+        Nonce: encrypted_message.nonce,
       }, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
@@ -130,8 +140,27 @@ export const useConversationStore = defineStore('conversation', () => {
         return
 
       conversations_with_new_messages.forEach((that_conversation: IConversation) => {
+        if (!that_conversation.Users[0].encryption_public_key || !that_conversation.Users[0].signing_public_key) {
+          console.error('no encryption key for the User')
+          return
+        }
+
         that_conversation.Messages?.forEach((that_message: IMessage) => {
-          // ! decrypt message here and check if it's valid
+          const uInt8Array_message = utils_store.convert_object_to_uint8array(that_message.Message_content)
+          const uInt8Array_nonce = utils_store.convert_object_to_uint8array(that_message.Nonce)
+          const uInt8Array_signing_public_key = utils_store.convert_object_to_uint8array(that_conversation.Users[0].signing_public_key)
+          const uInt8Array_encryption_public_key = utils_store.convert_object_to_uint8array(that_conversation.Users[0].encryption_public_key)
+          const enccrypted_data = {
+            encryptedMessage: uInt8Array_message,
+            nonce: uInt8Array_nonce,
+          }
+          const decrypted_message = encryption_store.decryptAndVerifyMessage(
+            enccrypted_data,
+            uInt8Array_signing_public_key,
+            uInt8Array_encryption_public_key,
+          )
+          that_message.Message_content_decrypted = decrypted_message
+
           decrypted_messages_id.push(that_message.Message_id)
         })
 
@@ -196,3 +225,6 @@ export const useConversationStore = defineStore('conversation', () => {
     conversations,
   }
 })
+
+if (import.meta.hot)
+  import.meta.hot.accept(acceptHMRUpdate(useConversationStore, import.meta.hot))
