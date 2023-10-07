@@ -43,7 +43,7 @@ export const useEncryptionStore = defineStore('encryption', () => {
     * @param salt - A salt for the PBKDF2 derivation (should remain constant for consistent results).
     * @return A deterministic seed.
     */
-  async function mnemonicToSeed(mnemonic: string, salt: string = 'Cerberes protège mes secrets les plus sombres'): Promise<Uint8Array> {
+  async function mnemonicToSeed(mnemonic: string, salt = 'Cerberes protège mes secrets les plus sombres'): Promise<Uint8Array> {
     const encoder = new TextEncoder()
     const mnemonicBytes = encoder.encode(mnemonic)
     const saltBytes = encoder.encode(salt)
@@ -161,9 +161,13 @@ export const useEncryptionStore = defineStore('encryption', () => {
   function signAndEncryptMessage(
     message: string,
     recipientPublicEncryptionKey: Uint8Array,
-    senderSecretEncryptionKey: Uint8Array,
-    senderSecretSigningKey: Uint8Array,
   ): { nonce: Uint8Array; encryptedMessage: Uint8Array } {
+    if (!signing_keypair.value || !encryption_keypair.value)
+      throw new Error('signing or encryption keypair not set')
+
+    const senderSecretSigningKey = signing_keypair.value?.secretKey
+    const senderSecretEncryptionKey = encryption_keypair.value.secretKey
+
     const signedMessage = signMessage(
       message,
       senderSecretSigningKey,
@@ -246,8 +250,11 @@ export const useEncryptionStore = defineStore('encryption', () => {
     encryptedData: { nonce: Uint8Array; encryptedMessage: Uint8Array },
     senderPublicSigningKey: Uint8Array,
     senderPublicEncryptionKey: Uint8Array,
-    recipientSecretEncryptionKey: Uint8Array,
   ): string {
+    if (!encryption_keypair.value)
+      throw new Error('encryption keypair not set')
+    const recipientSecretEncryptionKey = encryption_keypair.value.secretKey
+
     const decryptedMessage = decryptSignedMessage(
       encryptedData,
       senderPublicEncryptionKey,
