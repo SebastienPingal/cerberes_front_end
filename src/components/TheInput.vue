@@ -12,12 +12,16 @@ function send_message() {
 
 <template>
   <div class="w-full flex gap-4">
-    <textarea ref="textarea" v-model="input" v-bind="$attrs"
-      class="placeholder-blue-900 resize-none overflow-hidden border-2 border-blue-400 border-dashed bg-white p-2 text-blue-400 focus:border-solid dark:bg-dark-9 focus:outline-none transition-all rounded-md"
-      placeholder="Type a message..." @keydown.enter.prevent="send_message" />
-    <button v-if="input"
-      class="rounded-md bg-white text-white transition-all dark:bg-black  dark:text-white hover:text-white focus:outline-none dark:hover:text-white box-content border-2 border-blue-900 hover:border-blue-400 transition-all p-2"
-      @click="send_message">
+    <textarea
+      ref="textarea" v-model="input" v-bind="$attrs"
+      class="resize-none overflow-hidden border-2 border-blue-400 rounded-md border-dashed bg-white p-2 text-blue-400 transition-all focus:border-solid dark:bg-dark-9 focus:outline-none placeholder-blue-900"
+      placeholder="Type a message..." @keydown.enter.prevent="send_message"
+    />
+    <button
+      v-if="input"
+      class="box-content border-2 border-blue-900 rounded-md bg-white p-2 text-white transition-all transition-all hover:border-blue-400 dark:bg-black dark:text-white hover:text-white focus:outline-none dark:hover:text-white"
+      @click="send_message"
+    >
       Send
     </button>
   </div>

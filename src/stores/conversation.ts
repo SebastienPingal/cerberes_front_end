@@ -5,7 +5,7 @@ import type { IConversation, IMessage, IUser } from '~/types'
 export const useConversationStore = defineStore('conversation', () => {
   const user_store = useUserStore()
   const api_url = import.meta.env.VITE_API_URL
-  const storage_key = computed(() => user_store.user.User_id.toString() ?? 'default')
+  const storage_key = computed(() => user_store.user?.User_id.toString() ?? 'default')
   const encryption_store = useEncryptionStore()
   const utils_store = useUtilsStore()
 
@@ -17,8 +17,6 @@ export const useConversationStore = defineStore('conversation', () => {
       },
     }).value
   })
-  if (!conversations.value)
-    return
 
   const selected_conversation_id: Ref<number | null> = ref(null)
   const selected_conversation: Ref<IConversation | null> = computed(() => {
@@ -29,6 +27,9 @@ export const useConversationStore = defineStore('conversation', () => {
     ) ?? null
     selected_conv?.Messages?.forEach((message: IMessage) => {
       message.new = false
+    })
+    selected_conv.Messages?.sort((a: IMessage, b: IMessage) => {
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     })
     return selected_conv
   })

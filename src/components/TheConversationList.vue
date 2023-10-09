@@ -5,9 +5,11 @@ const conversation_store = useConversationStore()
 
 <template>
   <div>
-    <div v-if="conversation_store.conversations.length" class="flex flex-col gap-2 w-80">
-      <TheConversation v-for="conversation in conversation_store.conversations" :key="conversation.Conversation_id"
-        :conversation="conversation" />
+    <div v-if="conversation_store.conversations.length" class="w-80 flex flex-col gap-2">
+      <TheConversation
+        v-for="conversation in conversation_store.conversations" :key="conversation.Conversation_id"
+        :conversation="conversation"
+      />
       <div class="flex flex-col gap-2">
         <o-button @click="display_store.conversation_creator = true">
           Créer une conversation
@@ -17,9 +19,11 @@ const conversation_store = useConversationStore()
         </o-button>
       </div>
     </div>
-    <div v-else
+    <div
+      v-else
       class="max-h-screen max-w-15rem flex flex-col cursor-pointer place-items-center border border-1 rounded rounded-lg bg-white p-4 transition-all ease-in hover:scale-104 dark:bg-black hover:text-blue"
-      @click="display_store.conversation_creator = true">
+      @click="display_store.conversation_creator = true"
+    >
       <div class="text-lg">
         Créez votre première conversation
       </div>

@@ -1,4 +1,3 @@
-import { type Buffer } from 'node:buffer'
 import { type ViteSSGContext } from 'vite-ssg'
 
 export interface IUser {
@@ -37,9 +36,9 @@ export interface IMessage {
   Conversation_id: number
   Sender_id: number
   new?: boolean
-  Message_content?: Buffer
+  Message_content?: Uint8Array
   Message_content_decrypted?: string
-  Nonce?: Buffer
+  Nonce?: Uint8Array
   createdAt: string
 }
 

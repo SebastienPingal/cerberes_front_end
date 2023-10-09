@@ -9,14 +9,14 @@ useHead({
     { name: 'description', content: 'Opinionated Vite Starter Template' },
     {
       name: 'theme-color',
-      content: () => isDark.value ? '#00aba9' : '#ffffff',
+      content: () => (isDark.value ? '#00aba9' : '#ffffff'),
     },
   ],
   link: [
     {
       rel: 'icon',
       type: 'image/svg+xml',
-      href: () => preferredDark.value ? '/favicon-dark.svg' : '/favicon.svg',
+      href: () => (preferredDark.value ? '/favicon-dark.svg' : '/favicon.svg'),
     },
   ],
 })
@@ -31,16 +31,15 @@ onMounted(async () => {
   })
   preferredDark.value = darkQuery.matches
 
-  if(user_store.user){
+  if (user_store.user) {
     await indexedDB_store.retrieveAndSetKeyPairs()
     await user_store.get_user()
   }
 })
 
-document.addEventListener('visibilitychange', function() {
-  if (document.hidden) {
-    indexedDB_store.close()
-  }
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden)
+    indexedDB_store.closeDB()
 })
 </script>
 

@@ -25,7 +25,7 @@ function add_contact() {
     </div>
     <div v-if="display_add_contact" class="flex flex-col gap-1 border border-green p-2">
       <input v-model="input_contact" placeholder="Enter uuid here" class="pl-2" @keypress.enter="add_contact">
-      <o-button @click="add_contact" type="success" light>
+      <o-button type="success" light @click="add_contact">
         Ajouter un contact
       </o-button>
     </div>

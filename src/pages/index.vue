@@ -16,9 +16,9 @@ const user = computed(() => user_store.user)
       <TheRegister v-if="display_store.register" />
     </div>
     <div v-else class="w-full p-3">
-      <div v-if="encryption_store.signing_keypair && encryption_store.encryption_keypair" class="flex gap-3 w-full">
+      <div v-if="encryption_store.signing_keypair && encryption_store.encryption_keypair" class="w-full flex gap-3">
         <TheConversationList />
-        <TheMessageList class="w-full"/>
+        <TheMessageList class="w-full" />
       </div>
       <div v-else>
         <TheKey />
