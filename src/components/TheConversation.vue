@@ -10,7 +10,9 @@ const conversation_store = useConversationStore()
 
 <template>
   <div class="btn-contact place-self-start flex flex-col gap-1"
-    @click="conversation_store.selected_conversation_id = props.conversation.Conversation_id">
+    :class="conversation_store.selected_conversation_id === props.conversation.Conversation_id ? 'bg-gray-800' : ''"
+    @click="conversation_store.selected_conversation_id = props.conversation.Conversation_id"
+    >
     <div v-for="member in props.conversation.Users" :key="member.User_id">
       {{ member.User_name }}
     </div>
