@@ -24,7 +24,7 @@ const translate_to_relative_date = (date: string) => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-1">
+  <div v-if="message.Message_content_decrypted" class="flex flex-col gap-1">
     <div
       class="border-dashed border-blue-300 border rounded-tl-xl rounded-tr-xl rounded-bl-xl text-blue-300 w-fit py-1 px-4"
       :class="is_user_sender ? 'place-self-end' : 'place-self-start'">
