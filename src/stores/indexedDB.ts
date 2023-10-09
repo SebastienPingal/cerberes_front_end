@@ -12,15 +12,18 @@ export const useIndexedDBStore = defineStore('indexedDB ', () => {
   async function retrieveAndSetKeyPairs() { // TODO: mode this to utils store
     if (!user.value) {
       console.error('No user found.')
+      encryption_store.delete_keypairs()
       return
     }
     const retrievedKeys = await retrieveKeyPair()
-    if (!retrievedKeys) {
+    if (!retrievedKeys.publicSigningKey || !retrievedKeys.privateSigningKey) {
       console.error('No keys found in IndexedDB.')
+      encryption_store.delete_keypairs()
       return
     }
     if (!user.value.encryption_public_key || !user.value.signing_public_key) {
       console.error('No keys found in user.')
+      encryption_store.delete_keypairs()
       return
     }
     const encryption_public_key_uint8 = utils_store.convert_object_to_uint8array(user.value.encryption_public_key)
@@ -29,6 +32,7 @@ export const useIndexedDBStore = defineStore('indexedDB ', () => {
     if (!encryption_public_key_uint8.every((value, index) => value === retrievedKeys.publicEncryptionKey[index])
       || !signing_public_key_uint8.every((value, index) => value === retrievedKeys.publicSigningKey[index])) {
       console.error('Stored keys doesn\'t match the user\'s keys.')
+      encryption_store.delete_keypairs()
       return
     }
 
@@ -148,6 +152,7 @@ export const useIndexedDBStore = defineStore('indexedDB ', () => {
   }
 
   async function delete_indexedDB_keypair() {
+    const User_id = user.value.User_id
     if (!db)
       db = await setupIndexedDB()
     const response = await new Promise((resolve, reject) => {
@@ -160,10 +165,10 @@ export const useIndexedDBStore = defineStore('indexedDB ', () => {
       const transaction: IDBTransaction = db.transaction([storeName], 'readwrite')
       const store: IDBObjectStore = transaction.objectStore(storeName)
 
-      store.delete('publicSigningKey')
-      store.delete('privateSigningKey')
-      store.delete('publicEncryptionKey')
-      store.delete('privateEncryptionKey')
+      store.delete(`${User_id}_publicSigningKey`)
+      store.delete(`${User_id}_privateSigningKey`)
+      store.delete(`${User_id}_publicEncryptionKey`)
+      store.delete(`${User_id}_privateEncryptionKey`)
 
       transaction.onerror = (event) => {
         reject(event)

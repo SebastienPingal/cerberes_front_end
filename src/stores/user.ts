@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import axios from 'axios'
-import type { IUser } from '../types'
+import type { IContact, IConversation, IUser } from '../types'
 
 export const useUserStore = defineStore('user', () => {
   const api_url = import.meta.env.VITE_API_URL
@@ -64,6 +64,13 @@ export const useUserStore = defineStore('user', () => {
         withCredentials: true,
       })
       user.value = response.data as IUser
+      conversation_store.conversations.forEach((conversation: IConversation) => {
+        conversation.Users?.forEach((that_user: IUser) => {
+          const contact = user.value.contact_list?.find((contact: IContact) => contact.Contact_id === that_user.User_id) ?? user.value.demands?.find((contact: IContact) => contact.User_id === that_user.User_id)
+          that_user.encryption_public_key = contact.User?.encryption_public_key ?? contact.AddedBy?.encryption_public_key
+          that_user.signing_public_key = contact.User?.signing_public_key ?? contact.AddedBy?.signing_public_key
+        })
+      })
       await conversation_store.get_all_new_messages()
     }
     catch (error) {

@@ -17,15 +17,20 @@ export const useConversationStore = defineStore('conversation', () => {
       },
     }).value
   })
+  if (!conversations.value)
+    return
+
   const selected_conversation_id: Ref<number | null> = ref(null)
   const selected_conversation: Ref<IConversation | null> = computed(() => {
     if (selected_conversation_id.value === null)
       return null
-    if (!conversations.value)
-      return null
-    return conversations.value.find(
+    const selected_conv = conversations.value.find(
       (conversation: IConversation) => conversation.Conversation_id === selected_conversation_id.value,
     ) ?? null
+    selected_conv?.Messages?.forEach((message: IMessage) => {
+      message.new = false
+    })
+    return selected_conv
   })
 
   async function send_message(message: string) {
@@ -154,14 +159,19 @@ export const useConversationStore = defineStore('conversation', () => {
             encryptedMessage: uInt8Array_message,
             nonce: uInt8Array_nonce,
           }
-          const decrypted_message = encryption_store.decryptAndVerifyMessage(
-            enccrypted_data,
-            uInt8Array_signing_public_key,
-            uInt8Array_encryption_public_key,
-          )
-          that_message.Message_content_decrypted = decrypted_message
-
-          decrypted_messages_id.push(that_message.Message_id)
+          try {
+            const decrypted_message = encryption_store.decryptAndVerifyMessage(
+              enccrypted_data,
+              uInt8Array_signing_public_key,
+              uInt8Array_encryption_public_key,
+            )
+            that_message.Message_content_decrypted = decrypted_message
+            that_message.new = true
+            decrypted_messages_id.push(that_message.Message_id)
+          }
+          catch (error) {
+            console.error(`${error} for message ${that_message.Message_id}`)
+          }
         })
 
         // find conversation with id
