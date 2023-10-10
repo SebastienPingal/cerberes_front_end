@@ -1,11 +1,13 @@
+# Major TODO
+
+
 # Issues
 
-
-# TODO
+# Bonus
 
 - import conversation from computer
 - export conversation from computer
 
-- handle conversation demands
 
-- deploy to piemontaise
+
+- handle conversation demands

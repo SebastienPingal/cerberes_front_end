@@ -27,10 +27,6 @@ const conversation_store = useConversationStore()
 </template>
 
 <style scoped>
-.btn-contact {
-  @apply w-xs flex place-content-center border rounded p-2 cursor-pointer
-}
-
 .btn-contact:hover {
   @apply bg-gray-800
 }

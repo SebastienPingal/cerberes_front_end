@@ -22,7 +22,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col overflow-hidden border rounded-md p-4" style="height: calc(100vh - 200px)">
+  <div class="flex flex-col overflow-hidden border rounded-md p-4 h-full">
     <div v-if="conversation_store.selected_conversation" class="h-full flex flex-col">
       <div
         v-if="conversation_store.selected_conversation?.Messages" ref="message_container"
