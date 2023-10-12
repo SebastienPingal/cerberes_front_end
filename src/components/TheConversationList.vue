@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import Accordion from "primevue/accordion";
-import AccordionTab from "primevue/accordiontab"
+import AccordionTab from "primevue/accordiontab";
 
-const on_mobile = ref(window.innerWidth < 768)
+const on_mobile = ref(window.innerWidth < 768);
 
-const display_store = useDisplayStore()
-const conversation_store = useConversationStore()
-const accordion_index = ref(1)
+const display_store = useDisplayStore();
+const conversation_store = useConversationStore();
+const accordion_index = ref(1);
 
 onMounted(() => {
   const updateOnMobile = () => {
     on_mobile.value = window.innerWidth < 768;
-  }
+  };
 
-  window.addEventListener('resize', updateOnMobile)
+  window.addEventListener("resize", updateOnMobile);
 
   onBeforeUnmount(() => {
-    window.removeEventListener('resize', updateOnMobile)
-  })
-})
+    window.removeEventListener("resize", updateOnMobile);
+  });
+});
 </script>
 
 <template>
