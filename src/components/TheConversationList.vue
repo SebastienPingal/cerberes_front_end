@@ -75,7 +75,7 @@ onMounted(() => {
   </div>
 </template>
 <style scoped lang="css">
-::v-deep .p-accordion-header .p-accordion-toggle-icon {
+:deep .p-accordion-header .p-accordion-toggle-icon {
   display: none;
 }
 </style>
