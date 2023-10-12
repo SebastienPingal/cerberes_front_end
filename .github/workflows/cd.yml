@@ -43,6 +43,8 @@ jobs:
           script: |
             set -e
             cd Documents/PROG/cerberes/front_end
+            find . -type f ! -name '.env' -delete
+            find . -type d ! -name 'node_modules' -exec rm -rf {} +
             tar -xzvf package.tar.gz
             docker buildx build . -t cerberes_front:latest
             cd
