@@ -46,7 +46,7 @@ jobs:
             find . -type f ! -name '.env' -delete
             find . -type d ! -name 'node_modules' -exec rm -rf {} +
             tar -xzvf package.tar.gz
-            docker buildx build . -t cerberes_front:latest
+            pnpm build
             cd
             pm2 restart pm2.config.js
           command_timeout: 200m
