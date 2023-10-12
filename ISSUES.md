@@ -1,5 +1,8 @@
 # Major TODO
 
+- light version
+- loading
+- profile
 
 # Issues
 
