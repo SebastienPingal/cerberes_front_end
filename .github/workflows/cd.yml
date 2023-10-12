@@ -43,7 +43,7 @@ jobs:
           script: |
             set -e
             cd Documents/PROG/cerberes/front_end
-            find . -mindepth 1 -type f ! -name '.env' -delete
+            find . -mindepth 1 -type f ! -name '.env' ! -name 'package.tar.gz' -delete
             find . -mindepth 1 -type d ! -name 'node_modules' -exec rm -rf {} +
             tar -xzvf package.tar.gz
             docker buildx build . -t cerberes_front:latest
