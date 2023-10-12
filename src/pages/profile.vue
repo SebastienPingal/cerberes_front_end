@@ -4,7 +4,6 @@ import { OMessage } from 'onu-ui'
 defineOptions({
   name: 'IndexPage',
 })
-const router = useRouter()
 const user_store = useUserStore()
 const user = computed(() => user_store.user)
 

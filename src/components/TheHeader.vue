@@ -1,16 +1,16 @@
 <script setup lang="ts">
-const router = useRouter();
-const user_store = useUserStore();
-const user = computed(() => user_store.user);
+const router = useRouter()
+const user_store = useUserStore()
+const user = computed(() => user_store.user)
 
 function go_to_profile() {
-  router.push("/profile");
+  router.push('/profile')
 }
 </script>
 
 <template>
-  <div class="header w-max-7xl w-full flex justify-between pb-2 h-12">
-    <div class="border rounded p-1 flex place-self-center uppercase cursor-pointer hover:dark:bg-gray-8 font-bold tracking-widest" @click="router.push('/')">
+  <div class="header w-max-7xl h-12 w-full flex justify-between pb-2">
+    <div class="flex cursor-pointer place-self-center border rounded p-1 font-bold tracking-widest uppercase hover:dark:bg-gray-8" @click="router.push('/')">
       Cerberes
     </div>
     <div class="flex gap-2">
