@@ -19,7 +19,6 @@
     "sizecheck": "npx vite-bundle-visualizer"
   },
   "dependencies": {
-    "@quasar/extras": "^1.16.7",
     "@unhead/vue": "^1.1.30",
     "@unocss/reset": "^0.53.5",
     "@vueuse/core": "^10.2.1",
@@ -28,7 +27,7 @@
     "nprogress": "^0.2.0",
     "onu-ui": "1.0.14-beta.2",
     "pinia": "^2.1.4",
-    "quasar": "^2.12.7",
+    "primevue": "^3.36.0",
     "random-words": "^2.0.0",
     "serve": "^14.2.1",
     "vue": "^3.3.4",
@@ -40,7 +39,6 @@
     "@antfu/eslint-config": "^0.39.7",
     "@iconify-json/carbon": "^1.1.18",
     "@intlify/unplugin-vue-i18n": "^0.12.2",
-    "@quasar/vite-plugin": "^1.5.0",
     "@types/markdown-it-link-attributes": "^3.0.1",
     "@types/nprogress": "^0.2.0",
     "@unocss/eslint-config": "^0.53.5",

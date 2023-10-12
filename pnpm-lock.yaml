@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@quasar/extras':
-    specifier: ^1.16.7
-    version: 1.16.7
   '@unhead/vue':
     specifier: ^1.1.30
     version: 1.1.30(vue@3.3.4)
@@ -32,9 +29,9 @@ dependencies:
   pinia:
     specifier: ^2.1.4
     version: 2.1.4(typescript@5.1.6)(vue@3.3.4)
-  quasar:
-    specifier: ^2.12.7
-    version: 2.12.7
+  primevue:
+    specifier: ^3.36.0
+    version: 3.36.0(vue@3.3.4)
   random-words:
     specifier: ^2.0.0
     version: 2.0.0
@@ -64,9 +61,6 @@ devDependencies:
   '@intlify/unplugin-vue-i18n':
     specifier: ^0.12.2
     version: 0.12.2(rollup@2.79.1)(vue-i18n@9.2.2)
-  '@quasar/vite-plugin':
-    specifier: ^1.5.0
-    version: 1.5.0(@vitejs/plugin-vue@4.2.3)(quasar@2.12.7)(vite@4.4.3)(vue@3.3.4)
   '@types/markdown-it-link-attributes':
     specifier: ^3.0.1
     version: 3.0.1
@@ -2508,25 +2502,6 @@ packages:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: true
 
-  /@quasar/extras@1.16.7:
-    resolution: {integrity: sha512-nYF3gVE/si1YJ/D4qmAiHGwxoJIDCvTT8NI6ZmbTMPrur4J8xBKhfhfhyLoQ4k2jJZP6Rx0rUcB71FBNC2C8vQ==}
-    dev: false
-
-  /@quasar/vite-plugin@1.5.0(@vitejs/plugin-vue@4.2.3)(quasar@2.12.7)(vite@4.4.3)(vue@3.3.4):
-    resolution: {integrity: sha512-Kd4nFeWd0eAr7e+HMY8Wtmo86RjPZhCi6/bybTAyliFmS8AhZ2/oRTOGnBD9R1C6Ub3JPzC4eWFA20IlHa5A3w==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      '@vitejs/plugin-vue': ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0-beta.0
-      quasar: ^2.8.0
-      vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0-beta.0
-      vue: ^3.0.0
-    dependencies:
-      '@vitejs/plugin-vue': 4.2.3(vite@4.4.3)(vue@3.3.4)
-      quasar: 2.12.7
-      vite: 4.4.3(@types/node@18.16.19)(sass@1.32.12)
-      vue: 3.3.4
-    dev: true
-
   /@rollup/plugin-babel@5.3.1(@babel/core@7.21.8)(rollup@2.79.1):
     resolution: {integrity: sha512-WFfdLWU/xVWKeRQnKmIAQULUI7Il0gZnBIH/ZFO069wYIfPu+8zrfp/KMW0atmELoRDq8FbiP3VCss9MhCut7Q==}
     engines: {node: '>= 10.0.0'}
@@ -3817,7 +3792,7 @@ packages:
       '@vueuse/shared': 10.2.1(vue@3.3.4)
       axios: 1.5.0
       nprogress: 0.2.0
-      vue-demi: 0.14.5(vue@3.3.4)
+      vue-demi: 0.14.6(vue@3.3.4)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -8550,6 +8525,14 @@ packages:
       react-is: 18.2.0
     dev: true
 
+  /primevue@3.36.0(vue@3.3.4):
+    resolution: {integrity: sha512-si+pcbh+Y2by8cn4UrPFkC+ncS5fcv3ShKbTGINOsloKParRbSiqgBsqI8QmVkmutSLyABe6v5Kutjdenw2JFw==}
+    peerDependencies:
+      vue: ^3.0.0
+    dependencies:
+      vue: 3.3.4
+    dev: false
+
   /proc-log@3.0.0:
     resolution: {integrity: sha512-++Vn7NS4Xf9NacaU9Xq3URUuqZETPsf8L4j5/ckhaRYsfPeRyzGw+iDjFhV/Jr3uNmTvvddEJFWh5R1gRgUH8A==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
@@ -8736,10 +8719,6 @@ packages:
     dependencies:
       side-channel: 1.0.4
     dev: true
-
-  /quasar@2.12.7:
-    resolution: {integrity: sha512-JF2rb8u1RcXPpiaDh/RnO/5rFx7kABDMov0WnRI3acJ5s4TD2FyPrCmS7VgleLubDYRSsSAontJ6EijGz4BHig==}
-    engines: {node: '>= 10.18.1', npm: '>= 6.13.4', yarn: '>= 1.21.1'}
 
   /querystringify@2.2.0:
     resolution: {integrity: sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==}

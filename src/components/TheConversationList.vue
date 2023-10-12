@@ -1,37 +1,51 @@
 <script setup lang="ts">
-import { useQuasar } from "quasar";
+import Accordion from "primevue/accordion";
+import AccordionTab from "primevue/accordiontab"
 
-const q = useQuasar();
-const on_mobile = computed(() => q.screen.lt.sm);
-const display_store = useDisplayStore();
-const conversation_store = useConversationStore();
-const contact_list_expended = ref(false);
+const on_mobile = ref(window.innerWidth < 768)
+
+const display_store = useDisplayStore()
+const conversation_store = useConversationStore()
+const accordion_index = ref(1)
+
+onMounted(() => {
+  const updateOnMobile = () => {
+    on_mobile.value = window.innerWidth < 768;
+  }
+
+  window.addEventListener('resize', updateOnMobile)
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('resize', updateOnMobile)
+  })
+})
 </script>
 
 <template>
   <div>
     <div v-if="conversation_store.conversations.length" class="flex flex-col gap-2">
       <div flex flex-col gap-2>
-        <q-expansion-item v-if="on_mobile" v-model="contact_list_expended">
-          <template v-slot:header>
-            <TheConversation
-              v-if="conversation_store.selected_conversation"
-              :conversation="conversation_store.selected_conversation"
-            />
-            <div v-else>
-              <div class="btn-contact">Select a conversation</div>
-            </div>
-          </template>
-          <q-card>
-            <q-card-section @click="contact_list_expended = false" class="flex flex-col gap-2">
+        <Accordion class="w-full" v-model:activeIndex="accordion_index" v-if="on_mobile">
+          <AccordionTab>
+            <template #header>
+              <TheConversation
+                class="my-2 w-full"
+                v-if="conversation_store.selected_conversation"
+                :conversation="conversation_store.selected_conversation"
+              />
+              <div v-else class="w-full">
+                <div class="btn-contact my-2">Select a conversation</div>
+              </div>
+            </template>
+            <div @click="accordion_index = -1" class="flex flex-col gap-2">
               <TheConversation
                 v-for="conversation in conversation_store.conversations"
                 :key="conversation.Conversation_id"
                 :conversation="conversation"
               />
-            </q-card-section>
-          </q-card>
-        </q-expansion-item>
+            </div>
+          </AccordionTab>
+        </Accordion>
         <div v-else class="flex flex-col gap-2">
           <TheConversation
             v-for="conversation in conversation_store.conversations"
@@ -60,3 +74,8 @@ const contact_list_expended = ref(false);
     <TheConversationCreator v-if="display_store.conversation_creator" />
   </div>
 </template>
+<style scoped lang="css">
+::v-deep .p-accordion-header .p-accordion-toggle-icon {
+  display: none;
+}
+</style>
