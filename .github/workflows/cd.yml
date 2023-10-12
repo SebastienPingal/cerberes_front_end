@@ -43,10 +43,10 @@ jobs:
           script: |
             set -e
             cd Documents/PROG/cerberes/front_end
-            find . -type f ! -name '.env' -delete
-            find . -type d ! -name 'node_modules' -exec rm -rf {} +
+            find . -mindepth 1 -type f ! -name '.env' -delete
+            find . -mindepth 1 -type d ! -name 'node_modules' -exec rm -rf {} +
             tar -xzvf package.tar.gz
-            pnpm build
+            docker buildx build . -t cerberes_front:latest
             cd
             pm2 restart pm2.config.js
           command_timeout: 200m
