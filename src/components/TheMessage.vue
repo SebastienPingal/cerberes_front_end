@@ -26,14 +26,14 @@ function translate_to_relative_date(date: string) {
 </script>
 
 <template>
-  <div v-if="message.Message_content_decrypted" class="flex flex-col gap-1">
+  <div v-if="message.Message_content_decrypted" class="flex flex-col gap-1" :class="is_user_sender ? 'place-items-end' : 'place-items-start'">
     <div
-      class="w-fit border border-blue-300 rounded-bl-xl rounded-tl-xl rounded-tr-xl border-dashed px-4 py-1 text-blue-300"
-      :class="is_user_sender ? 'place-self-end' : 'place-self-start'"
+      class="w-fit border rounded-tl-xl rounded-tr-xl border-dashed px-4 py-1"
+      :class="is_user_sender ? 'text-blue-300 border-blue-300 rounded-bl-xl' : 'border-yellow-200 text-yellow-200 rounded-br-xl'"
     >
       {{ message.Message_content_decrypted }}
     </div>
-    <div class="flex place-self-end pr-5 text-xs">
+    <div class="flex px-5 text-xs">
       {{ translate_to_relative_date(message.createdAt) }}
     </div>
   </div>
