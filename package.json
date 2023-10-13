@@ -27,7 +27,6 @@
     "nprogress": "^0.2.0",
     "onu-ui": "1.0.14-beta.2",
     "pinia": "^2.1.6",
-    "primevue": "^3.36.0",
     "random-words": "^2.0.0",
     "serve": "^14.2.1",
     "vue": "^3.3.4",

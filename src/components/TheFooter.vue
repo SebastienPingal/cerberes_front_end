@@ -1,7 +1,6 @@
 <script setup lang="ts">
 // import { availableLocales, loadLanguageAsync } from '~/modules/i18n'
 
-const { t } = useI18n()
 
 // async function toggleLocales() {
 //   // change to some real logic
@@ -14,11 +13,11 @@ const { t } = useI18n()
 
 <template>
   <nav flex="~ gap-4" mt-6 justify-center text-xl>
-    <RouterLink icon-btn to="/" :title="t('button.home')">
+    <RouterLink icon-btn to="/" title="home">
       <div i-carbon-campsite />
     </RouterLink>
 
-    <button icon-btn :title="t('button.toggle_dark')" @click="toggleDark()">
+    <button icon-btn @click="toggleDark()">
       <div i="carbon-sun dark:carbon-moon" />
     </button>
 
