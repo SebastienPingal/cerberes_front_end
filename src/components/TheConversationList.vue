@@ -30,7 +30,9 @@ onMounted(() => {
               :conversation="conversation_store.selected_conversation"
             />
             <div v-else class="w-full">
-              <div class="my-2 btn-contact">Select a conversation</div>
+              <div class="my-2 btn-contact">
+                Select a conversation
+              </div>
             </div>
           </div>
           <div v-if="display_drawer" class="transition-all">
@@ -55,7 +57,9 @@ onMounted(() => {
         </o-button>
       </div>
       <div class="flex flex-col gap-2">
-        <o-button @click="conversation_store.get_all_new_messages"> Rafraichir </o-button>
+        <o-button @click="conversation_store.get_all_new_messages">
+          Rafraichir
+        </o-button>
       </div>
     </div>
     <div
@@ -63,7 +67,9 @@ onMounted(() => {
       class="max-h-screen max-w-15rem flex flex-col cursor-pointer place-items-center border border-1 rounded rounded-lg bg-white p-4 transition-all ease-in hover:scale-104 dark:bg-black"
       @click="display_store.conversation_creator = true"
     >
-      <div class="text-lg">Créez votre première conversation</div>
+      <div class="text-lg">
+        Créez votre première conversation
+      </div>
       <div>
         <o-icon i-carbon-add class="h-4rem w-4rem" />
       </div>
