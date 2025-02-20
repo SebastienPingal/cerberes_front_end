@@ -4,8 +4,8 @@ const utils_store = useUtilsStore()
 const display_generator = ref(false)
 const display_importator = ref(false)
 
-const signing_keypair = computed(() => encryption_store.signing_keypair)
-const encryption_keypair = computed(() => encryption_store.encryption_keypair)
+const signing_keypair = ref(encryption_store.signing_keypair)
+const encryption_keypair = ref(encryption_store.encryption_keypair)
 </script>
 
 <template>

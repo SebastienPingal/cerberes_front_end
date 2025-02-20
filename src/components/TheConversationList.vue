@@ -1,21 +1,21 @@
 <script setup lang="ts">
-const on_mobile = ref(window.innerWidth < 768);
+const on_mobile = ref(window.innerWidth < 768)
 
-const display_store = useDisplayStore();
-const display_drawer = ref(false);
-const conversation_store = useConversationStore();
+const display_store = useDisplayStore()
+const display_drawer = ref(false)
+const conversation_store = useConversationStore()
 
 onMounted(() => {
   const updateOnMobile = () => {
-    on_mobile.value = window.innerWidth < 768;
-  };
+    on_mobile.value = window.innerWidth < 768
+  }
 
-  window.addEventListener("resize", updateOnMobile);
+  window.addEventListener('resize', updateOnMobile)
 
   onBeforeUnmount(() => {
-    window.removeEventListener("resize", updateOnMobile);
-  });
-});
+    window.removeEventListener('resize', updateOnMobile)
+  })
+})
 </script>
 
 <template>
@@ -60,7 +60,7 @@ onMounted(() => {
     </div>
     <div
       v-else
-      class="max-h-screen max-w-15rem flex flex-col cursor-pointer place-items-center border border-1 rounded rounded-lg bg-white p-4 transition-all ease-in hover:scale-104 dark:bg-black hover:text-blue"
+      class="max-h-screen max-w-15rem flex flex-col cursor-pointer place-items-center border border-1 rounded rounded-lg bg-white p-4 transition-all ease-in hover:scale-104 dark:bg-black"
       @click="display_store.conversation_creator = true"
     >
       <div class="text-lg">Créez votre première conversation</div>

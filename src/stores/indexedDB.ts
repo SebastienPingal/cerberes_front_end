@@ -10,31 +10,31 @@ export const useIndexedDBStore = defineStore('indexedDB ', () => {
   let db: IDBDatabase | null = null
 
   async function retrieveAndSetKeyPairs() { // TODO: mode this to utils store
-    if (!user.value) {
-      console.error('No user found.')
-      encryption_store.delete_keypairs()
-      return
-    }
+    // if (!user.value) {
+    //   console.error('No user found.')
+    //   encryption_store.delete_keypairs()
+    //   return
+    // }
     const retrievedKeys = await retrieveKeyPair()
     if (!retrievedKeys.publicSigningKey || !retrievedKeys.privateSigningKey) {
       console.error('No keys found in IndexedDB.')
       encryption_store.delete_keypairs()
       return
     }
-    if (!user.value.encryption_public_key || !user.value.signing_public_key) {
-      console.error('No keys found in user.')
-      encryption_store.delete_keypairs()
-      return
-    }
-    const encryption_public_key_uint8 = utils_store.convert_object_to_uint8array(user.value.encryption_public_key)
-    const signing_public_key_uint8 = utils_store.convert_object_to_uint8array(user.value.signing_public_key)
+    // if (!user.value.encryption_public_key || !user.value.signing_public_key) {
+    //   console.error('No keys found in user.')
+    //   encryption_store.delete_keypairs()
+    //   return
+    // }
+    // const encryption_public_key_uint8 = utils_store.convert_object_to_uint8array(user.value.encryption_public_key)
+    // const signing_public_key_uint8 = utils_store.convert_object_to_uint8array(user.value.signing_public_key)
 
-    if (!encryption_public_key_uint8.every((value, index) => value === retrievedKeys.publicEncryptionKey[index])
-      || !signing_public_key_uint8.every((value, index) => value === retrievedKeys.publicSigningKey[index])) {
-      console.error('Stored keys doesn\'t match the user\'s keys.')
-      encryption_store.delete_keypairs()
-      return
-    }
+    // if (!encryption_public_key_uint8.every((value, index) => value === retrievedKeys.publicEncryptionKey[index])
+    //   || !signing_public_key_uint8.every((value, index) => value === retrievedKeys.publicSigningKey[index])) {
+    //   console.error('Stored keys doesn\'t match the user\'s keys.')
+    //   encryption_store.delete_keypairs()
+    //   return
+    // }
 
     encryption_store.setKeyPairs(
       retrievedKeys.publicSigningKey,
@@ -73,7 +73,7 @@ export const useIndexedDBStore = defineStore('indexedDB ', () => {
   async function storeKeyPair() {
     if (!db)
       db = await setupIndexedDB()
-    const User_id = user.value.User_id
+    const User_id = user?.value?.User_id || 0
     const response = new Promise<void>((resolve, reject) => {
       if (!db) {
         console.error('IndexedDB not initialized.')
@@ -106,7 +106,7 @@ export const useIndexedDBStore = defineStore('indexedDB ', () => {
     publicEncryptionKey: Uint8Array
     privateEncryptionKey: Uint8Array
   }> {
-    const User_id = user.value.User_id
+    const User_id = user?.value?.User_id || 0
     if (!db)
       db = await setupIndexedDB()
     const retrieve_key_pair = await new Promise((resolve, reject) => {

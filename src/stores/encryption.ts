@@ -67,7 +67,8 @@ export const useEncryptionStore = defineStore('encryption', () => {
       256, // 32 bytes (256 bits) for Ed25519 seed
     )
 
-    return new Uint8Array(seed)
+    const seed_array = new Uint8Array(seed)
+    return seed_array
   }
 
   /**

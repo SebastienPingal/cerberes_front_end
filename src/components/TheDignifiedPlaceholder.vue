@@ -18,6 +18,10 @@ watchDebounced([x, y], () => {
   generate_random_string()
 }, { debounce: 10 })
 
+// Add theme detection
+const isDark = useDark()
+const textColor = computed(() => isDark.value ? '#fff' : '#000')
+
 function generate_random_string() {
   if (!placeholder.value)
     return
@@ -42,7 +46,7 @@ onMounted(() => {
 
 <template>
   <div ref="placeholder" class="placeholder">
-    <div class="text">
+    <div class="text" :style="{ color: textColor }">
       {{ content }}
     </div>
     <div class="mask" :style="{ left: `${adjusted_x}px`, top: `${adjusted_y}px` }" />

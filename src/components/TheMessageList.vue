@@ -44,7 +44,7 @@ onMounted(async () => {
     </div>
     <div v-else class="relative h-full w-full flex flex-col place-content-center items-center gap-2">
       <div class="z-10 w-fit rounded-xl bg-white p-8 text-xl dark:bg-dark-9">
-        No conversation selected, select a conversation!
+        Le serveur du site n'est plus en place.
       </div>
       <TheDignifiedPlaceholder class="absolute bottom-0 left-0 right-0 top-0 text-white" />
     </div>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 // import { availableLocales, loadLanguageAsync } from '~/modules/i18n'
 
-
 // async function toggleLocales() {
 //   // change to some real logic
 //   const locales = availableLocales

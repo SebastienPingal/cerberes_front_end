@@ -31,10 +31,8 @@ onMounted(async () => {
   })
   preferredDark.value = darkQuery.matches
 
-  if (user_store.user) {
-    await indexedDB_store.retrieveAndSetKeyPairs()
-    await user_store.get_user()
-  }
+  await indexedDB_store.retrieveAndSetKeyPairs()
+  await user_store.get_user()
 })
 
 document.addEventListener('visibilitychange', () => {
