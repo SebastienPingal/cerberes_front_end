@@ -52,6 +52,7 @@ export const useUserStore = defineStore('user', () => {
 
   const user = ref(storedUser)
   const isInitialized = ref(false)
+  const isInitializing = ref(false)
 
   // Add watcher to debug user changes
   watch(user, (newValue) => {
@@ -60,9 +61,10 @@ export const useUserStore = defineStore('user', () => {
   }, { immediate: true })
 
   async function initializeSession() {
-    if (isInitialized.value)
+    if (isInitialized.value || isInitializing.value)
       return
 
+    isInitializing.value = true
     try {
       if (user.value) {
         // eslint-disable-next-line no-console
@@ -75,6 +77,9 @@ export const useUserStore = defineStore('user', () => {
       console.error('⚠️ Failed to initialize session:', error)
       if (axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403))
         logout()
+    }
+    finally {
+      isInitializing.value = false
     }
   }
 
@@ -116,15 +121,18 @@ export const useUserStore = defineStore('user', () => {
   async function get_user() {
     try {
       const response = await api.get('/users/me')
-      user.value = response.data as IUser
-      conversation_store.conversations.forEach((conversation: IConversation) => {
-        conversation.Users?.forEach((that_user: IUser) => {
-          const contact = user.value.contact_list?.find((contact: IContact) => contact.Contact_id === that_user.User_id) ?? user.value.demands?.find((contact: IContact) => contact.User_id === that_user.User_id)
-          that_user.encryption_public_key = contact.User?.encryption_public_key ?? contact.AddedBy?.encryption_public_key
-          that_user.signing_public_key = contact.User?.signing_public_key ?? contact.AddedBy?.signing_public_key
+      // Only update user if we got a valid response
+      if (response.data) {
+        user.value = response.data as IUser
+        conversation_store.conversations.forEach((conversation: IConversation) => {
+          conversation.Users?.forEach((that_user: IUser) => {
+            const contact = user.value.contact_list?.find((contact: IContact) => contact.Contact_id === that_user.User_id) ?? user.value.demands?.find((contact: IContact) => contact.User_id === that_user.User_id)
+            that_user.encryption_public_key = contact.User?.encryption_public_key ?? contact.AddedBy?.encryption_public_key
+            that_user.signing_public_key = contact.User?.signing_public_key ?? contact.AddedBy?.signing_public_key
+          })
         })
-      })
-      await conversation_store.get_all_new_messages()
+        await conversation_store.get_all_new_messages()
+      }
     }
     catch (error) {
       if (axios.isAxiosError(error)) {
@@ -197,7 +205,9 @@ export const useUserStore = defineStore('user', () => {
   }
 
   function logout() {
-    user.value = null
+    // Only clear user if we're not in the middle of initialization
+    if (!isInitializing.value)
+      user.value = null
   }
 
   return {
