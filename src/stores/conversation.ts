@@ -2,6 +2,17 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import axios from 'axios'
 import type { IConversation, IMessage, IUser } from '~/types'
 
+const api_url = import.meta.env.VITE_API_URL
+
+// Create axios instance with default config
+const api = axios.create({
+  baseURL: api_url,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
 export const useConversationStore = defineStore('conversation', () => {
   const user_store = useUserStore()
   const api_url = import.meta.env.VITE_API_URL
@@ -79,13 +90,10 @@ export const useConversationStore = defineStore('conversation', () => {
         uint8_recipient_public_encryption_key,
       )
 
-      const response = await axios.post(`${api_url}/messages`, {
+      const response = await api.post('/messages', {
         Conversation: conversation_without_messages,
         Message_content: encrypted_message.encryptedMessage,
         Nonce: encrypted_message.nonce,
-      }, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
       })
       if (response.status !== 201)
         throw new Error('Message not sent')
@@ -136,10 +144,7 @@ export const useConversationStore = defineStore('conversation', () => {
 
   async function get_all_new_messages() {
     try {
-      const response_get_messages = await axios.get(`${api_url}/conversations`, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      })
+      const response_get_messages = await api.get('/conversations')
       const conversations_with_new_messages: IConversation[] = response_get_messages.data
       const decrypted_messages_id: number[] = []
       if (!conversations_with_new_messages.length)
@@ -220,9 +225,7 @@ export const useConversationStore = defineStore('conversation', () => {
           user_store.logout()
         throw new Error(error.response?.data)
       }
-      else {
-        console.error(error)
-      }
+      else { console.error(error) }
     }
   }
 

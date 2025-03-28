@@ -2,8 +2,18 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import axios from 'axios'
 import type { IContact, IConversation, IUser } from '../types'
 
+const api_url = import.meta.env.VITE_API_URL
+
+// Create axios instance with default config
+const api = axios.create({
+  baseURL: api_url,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
 export const useUserStore = defineStore('user', () => {
-  const api_url = import.meta.env.VITE_API_URL
   const encryption_store = useEncryptionStore()
   const conversation_store = useConversationStore()
   const indexedDB_store = useIndexedDBStore()
@@ -17,16 +27,12 @@ export const useUserStore = defineStore('user', () => {
 
   async function register(User_name: string, User_email: string, User_password: string) {
     try {
-      await axios.post(`${api_url}/auth/register`, {
+      const response = await api.post('/auth/register', {
         User_name,
         User_email,
         User_password,
-      }, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      }).then((response) => {
-        user.value = response.data as IUser
       })
+      user.value = response.data as IUser
     }
     catch (error) {
       if (axios.isAxiosError(error))
@@ -38,12 +44,9 @@ export const useUserStore = defineStore('user', () => {
 
   async function login(User_email: string, User_password: string) {
     try {
-      const response = await axios.post(`${api_url}/auth/login`, {
+      const response = await api.post('/auth/login', {
         User_email,
         User_password,
-      }, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
       })
       user.value = response.data as IUser
       await indexedDB_store.retrieveAndSetKeyPairs()
@@ -59,10 +62,7 @@ export const useUserStore = defineStore('user', () => {
 
   async function get_user() {
     try {
-      const response = await axios.get(`${api_url}/users/me`, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      })
+      const response = await api.get('/users/me')
       user.value = response.data as IUser
       conversation_store.conversations.forEach((conversation: IConversation) => {
         conversation.Users?.forEach((that_user: IUser) => {
@@ -86,12 +86,9 @@ export const useUserStore = defineStore('user', () => {
 
   async function update_public_keys() {
     try {
-      const response = await axios.patch(`${api_url}/users/public_keys`, {
+      const response = await api.patch('/users/public_keys', {
         encryption_public_key: encryption_store.encryption_keypair?.publicKey,
         signing_public_key: encryption_store.signing_keypair?.publicKey,
-      }, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
       })
       user.value = response.data as IUser
     }
@@ -108,10 +105,7 @@ export const useUserStore = defineStore('user', () => {
 
   async function add_contact(contact_uuid: string) {
     try {
-      await axios.post(`${api_url}/contacts?uuid=${contact_uuid}`, {}, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      })
+      await api.post(`/contacts?uuid=${contact_uuid}`)
       await get_user()
     }
     catch (error) {
@@ -127,11 +121,8 @@ export const useUserStore = defineStore('user', () => {
 
   async function create_conversation(members_id: number[]) {
     try {
-      await axios.post(`${api_url}/conversations`, {
+      await api.post('/conversations', {
         members_id,
-      }, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
       })
       await get_user()
     }
