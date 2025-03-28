@@ -15,6 +15,19 @@ export const useUserStore = defineStore('user', () => {
     },
   }))
 
+  async function checkAuth() {
+    try {
+      const response = await axios.get(`${api_url}/users/me`, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      })
+      return response.status === 200
+    }
+    catch (error) {
+      return false
+    }
+  }
+
   async function register(User_name: string, User_email: string, User_password: string) {
     try {
       await axios.post(`${api_url}/auth/register`, {
@@ -47,7 +60,7 @@ export const useUserStore = defineStore('user', () => {
       })
       user.value = response.data as IUser
       await indexedDB_store.retrieveAndSetKeyPairs()
-      conversation_store.get_all_new_messages()
+      await conversation_store.get_all_new_messages()
     }
     catch (error) {
       if (axios.isAxiosError(error))
@@ -64,6 +77,7 @@ export const useUserStore = defineStore('user', () => {
         withCredentials: true,
       })
       user.value = response.data as IUser
+
       conversation_store.conversations.forEach((conversation: IConversation) => {
         conversation.Users?.forEach((that_user: IUser) => {
           const contact = user.value.contact_list?.find((contact: IContact) => contact.Contact_id === that_user.User_id) ?? user.value.demands?.find((contact: IContact) => contact.User_id === that_user.User_id)
@@ -77,10 +91,13 @@ export const useUserStore = defineStore('user', () => {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401)
           logout()
+
         else
           throw new Error(error.response?.data)
       }
-      else { console.error(error) }
+      else {
+        throw error
+      }
     }
   }
 
@@ -159,6 +176,7 @@ export const useUserStore = defineStore('user', () => {
     add_contact,
     create_conversation,
     logout,
+    checkAuth,
   }
 })
 
