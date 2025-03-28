@@ -4,7 +4,7 @@ import { generate } from 'random-words'
 const encryption_store = useEncryptionStore()
 const indexedDb_store = useIndexedDBStore()
 const user_store = useUserStore()
-const prompt = ref('prompt')
+const prompt = ref('random_words')
 const words: Ref<string[]> = ref([])
 
 function generate12RandomWords() {
