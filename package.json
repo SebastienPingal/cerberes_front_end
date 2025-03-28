@@ -6,7 +6,7 @@
   "scripts": {
     "start": "dotenv -e .env serve dist -l 3333",
     "build": "vite-ssg build",
-    "dev": "vite --port 3333 --open",
+    "dev": "vite --port 3333",
     "lint": "eslint .",
     "preview": "vite preview",
     "preview-https": "serve dist",

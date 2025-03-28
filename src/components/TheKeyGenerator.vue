@@ -4,7 +4,7 @@ import { generate } from 'random-words'
 const encryption_store = useEncryptionStore()
 const indexedDb_store = useIndexedDBStore()
 const user_store = useUserStore()
-const prompt = ref('init')
+const prompt = ref('prompt')
 const words: Ref<string[]> = ref([])
 
 function generate12RandomWords() {
@@ -55,7 +55,7 @@ onMounted(() => {
     </div>
     <div v-if="prompt === 'random_words'" class="flex flex-col items-center gap-2">
       <p>
-        Here are your words.
+        Here are your words. They represent your key.
       </p>
       <p class="text-xs">
         Carefully write them down on a piece of paper and keep it safe. <br> They will not be stored anywhere.
