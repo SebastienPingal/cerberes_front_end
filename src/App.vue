@@ -31,20 +31,9 @@ onMounted(async () => {
   })
   preferredDark.value = darkQuery.matches
 
-  try {
-    if (user_store.user) {
-      const isAuthenticated = await user_store.checkAuth()
-      if (isAuthenticated) {
-        await user_store.get_user()
-        await indexedDB_store.retrieveAndSetKeyPairs()
-      }
-      else {
-        user_store.logout()
-      }
-    }
-  }
-  catch (error) {
-    user_store.logout()
+  if (user_store.user) {
+    await indexedDB_store.retrieveAndSetKeyPairs()
+    await user_store.get_user()
   }
 })
 
