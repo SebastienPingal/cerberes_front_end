@@ -2,7 +2,8 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import axios from 'axios'
 import type { IContact, IConversation, IUser } from '../types'
 
-const api_url = import.meta.env.VITE_API_URL
+const api_url = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const isProduction = import.meta.env.PROD
 
 // Create axios instance with default config
 const api = axios.create({
@@ -21,6 +22,10 @@ api.interceptors.request.use((config) => {
   // eslint-disable-next-line no-console
   console.log('🌐 Making request:', config.method?.toUpperCase(), config.url)
   config.withCredentials = true
+  // Add additional headers for production
+  if (isProduction)
+    config.headers['Access-Control-Allow-Credentials'] = 'true'
+
   return config
 })
 
@@ -46,12 +51,32 @@ export const useUserStore = defineStore('user', () => {
   })
 
   const user = ref(storedUser)
+  const isInitialized = ref(false)
 
   // Add watcher to debug user changes
   watch(user, (newValue) => {
     // eslint-disable-next-line no-console
     console.log('👤 User state changed:', newValue)
   }, { immediate: true })
+
+  async function initializeSession() {
+    if (isInitialized.value)
+      return
+
+    try {
+      if (user.value) {
+        // eslint-disable-next-line no-console
+        console.log('🔄 Initializing session...')
+        await get_user()
+        isInitialized.value = true
+      }
+    }
+    catch (error) {
+      console.error('⚠️ Failed to initialize session:', error)
+      if (axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403))
+        logout()
+    }
+  }
 
   async function register(User_name: string, User_email: string, User_password: string) {
     try {
@@ -184,6 +209,7 @@ export const useUserStore = defineStore('user', () => {
     add_contact,
     create_conversation,
     logout,
+    initializeSession,
   }
 })
 

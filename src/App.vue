@@ -27,6 +27,7 @@ const indexedDB_store = useIndexedDBStore()
 const user_store = useUserStore()
 
 onMounted(async () => {
+  // eslint-disable-next-line no-console
   console.log('🚀 App mounted')
   const darkQuery = window.matchMedia('(prefers-color-scheme: dark)')
   darkQuery.addEventListener('change', () => {
@@ -34,13 +35,17 @@ onMounted(async () => {
   })
   preferredDark.value = darkQuery.matches
 
+  // eslint-disable-next-line no-console
   console.log('👤 Current user state:', user_store.user)
   if (user_store.user) {
     try {
+      // eslint-disable-next-line no-console
       console.log('🔄 Attempting to restore user session...')
-      await user_store.get_user()
+      await user_store.initializeSession()
+      // eslint-disable-next-line no-console
       console.log('✅ User session restored successfully')
       await indexedDB_store.retrieveAndSetKeyPairs()
+      // eslint-disable-next-line no-console
       console.log('🔑 Key pairs retrieved successfully')
     }
     catch (error) {
@@ -57,7 +62,7 @@ onMounted(async () => {
         // Retry once after a short delay
         setTimeout(async () => {
           try {
-            await user_store.get_user()
+            await user_store.initializeSession()
             // eslint-disable-next-line no-console
             console.log('✅ User session restored on retry')
             await indexedDB_store.retrieveAndSetKeyPairs()
