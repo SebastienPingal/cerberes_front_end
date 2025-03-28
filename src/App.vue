@@ -25,22 +25,35 @@ const indexedDB_store = useIndexedDBStore()
 const user_store = useUserStore()
 
 onMounted(async () => {
+  console.log('🚀 App mounted')
   const darkQuery = window.matchMedia('(prefers-color-scheme: dark)')
   darkQuery.addEventListener('change', () => {
     preferredDark.value = darkQuery.matches
   })
   preferredDark.value = darkQuery.matches
 
+  console.log('👤 Current user state:', user_store.user)
   if (user_store.user) {
     try {
+      console.log('🔄 Attempting to restore user session...')
       await user_store.get_user()
+      console.log('✅ User session restored successfully')
       await indexedDB_store.retrieveAndSetKeyPairs()
+      console.log('🔑 Key pairs retrieved successfully')
     }
     catch (error) {
       console.error('🔑 Failed to restore authentication state:', error)
       user_store.logout()
     }
   }
+  else {
+    console.log('ℹ️ No user found in storage')
+  }
+})
+
+// Add error handler for unhandled promise rejections
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('❌ Unhandled promise rejection:', event.reason)
 })
 
 document.addEventListener('visibilitychange', () => {

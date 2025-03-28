@@ -18,6 +18,8 @@ const api = axios.create({
 
 // Add request interceptor to ensure credentials are sent
 api.interceptors.request.use((config) => {
+  // eslint-disable-next-line no-console
+  console.log('🌐 Making request:', config.method?.toUpperCase(), config.url)
   config.withCredentials = true
   return config
 })
@@ -27,12 +29,29 @@ export const useUserStore = defineStore('user', () => {
   const conversation_store = useConversationStore()
   const indexedDB_store = useIndexedDBStore()
 
-  const user = ref(useStorage('curent_user', <IUser | null>null, undefined, {
+  // Add debug logging for storage initialization
+  const storedUser = useStorage('curent_user', <IUser | null>null, undefined, {
     serializer: {
-      read: (v: any) => v ? JSON.parse(v) : null,
-      write: (v: any) => JSON.stringify(v),
+      read: (v: any) => {
+        // eslint-disable-next-line no-console
+        console.log('📖 Reading from storage:', v)
+        return v ? JSON.parse(v) : null
+      },
+      write: (v: any) => {
+        // eslint-disable-next-line no-console
+        console.log('📝 Writing to storage:', v)
+        return JSON.stringify(v)
+      },
     },
-  }))
+  })
+
+  const user = ref(storedUser)
+
+  // Add watcher to debug user changes
+  watch(user, (newValue) => {
+    // eslint-disable-next-line no-console
+    console.log('👤 User state changed:', newValue)
+  }, { immediate: true })
 
   async function register(User_name: string, User_email: string, User_password: string) {
     try {
@@ -170,11 +189,18 @@ export const useUserStore = defineStore('user', () => {
 
 // Add response interceptor to handle cookie-related errors
 api.interceptors.response.use(
-  response => response,
+  (response) => {
+    // eslint-disable-next-line no-console
+    console.log('✅ Response received:', response.config.method?.toUpperCase(), response.config.url, response.status)
+    return response
+  },
   (error) => {
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
-      console.error('🔑 Session expired or invalid:', error.response?.data)
-      useUserStore().logout()
+    if (axios.isAxiosError(error)) {
+      console.error('❌ Request failed:', error.config?.method?.toUpperCase(), error.config?.url, error.response?.status)
+      if (error.response?.status === 401) {
+        console.error('🔑 Session expired or invalid:', error.response?.data)
+        useUserStore().logout()
+      }
     }
     return Promise.reject(error)
   },
