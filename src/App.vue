@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-console
+console.log('📜 Script starting')
+
 <script setup lang="ts">
 // https://github.com/vueuse/head
 // you can use this to manipulate the document head in any components,
@@ -21,10 +24,17 @@ useHead({
   ],
 })
 
+// eslint-disable-next-line no-console
+console.log('🔧 Head setup complete')
+
 const indexedDB_store = useIndexedDBStore()
 const user_store = useUserStore()
 
+// eslint-disable-next-line no-console
+console.log('🏪 Stores initialized')
+
 onMounted(async () => {
+  // eslint-disable-next-line no-console
   console.log('🚀 App mounted')
   const darkQuery = window.matchMedia('(prefers-color-scheme: dark)')
   darkQuery.addEventListener('change', () => {
@@ -32,13 +42,17 @@ onMounted(async () => {
   })
   preferredDark.value = darkQuery.matches
 
+  // eslint-disable-next-line no-console
   console.log('👤 Current user state:', user_store.user)
   if (user_store.user) {
     try {
+      // eslint-disable-next-line no-console
       console.log('🔄 Attempting to restore user session...')
       await user_store.get_user()
+      // eslint-disable-next-line no-console
       console.log('✅ User session restored successfully')
       await indexedDB_store.retrieveAndSetKeyPairs()
+      // eslint-disable-next-line no-console
       console.log('🔑 Key pairs retrieved successfully')
     }
     catch (error) {
@@ -47,6 +61,7 @@ onMounted(async () => {
     }
   }
   else {
+    // eslint-disable-next-line no-console
     console.log('ℹ️ No user found in storage')
   }
 })

@@ -2,7 +2,13 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import axios from 'axios'
 import type { IContact, IConversation, IUser } from '../types'
 
+// eslint-disable-next-line no-console
+console.log('🏗️ Creating user store')
+
 const api_url = import.meta.env.VITE_API_URL
+
+// eslint-disable-next-line no-console
+console.log('🌐 API URL:', api_url)
 
 // Create axios instance with default config
 const api = axios.create({
@@ -25,6 +31,9 @@ api.interceptors.request.use((config) => {
 })
 
 export const useUserStore = defineStore('user', () => {
+  // eslint-disable-next-line no-console
+  console.log('🔧 Initializing user store')
+
   const encryption_store = useEncryptionStore()
   const conversation_store = useConversationStore()
   const indexedDB_store = useIndexedDBStore()
