@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import axios from 'axios'
+
 // https://github.com/vueuse/head
 // you can use this to manipulate the document head in any components,
 // they will be rendered correctly in the html results with vite-ssg
@@ -42,11 +44,34 @@ onMounted(async () => {
       console.log('🔑 Key pairs retrieved successfully')
     }
     catch (error) {
-      console.error('🔑 Failed to restore authentication state:', error)
-      user_store.logout()
+      console.error('⚠️ Failed to restore authentication state:', error)
+      // Only logout if we get a 401 or 403 response
+      if (axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
+        // eslint-disable-next-line no-console
+        console.log('🔒 Session expired, logging out...')
+        user_store.logout()
+      }
+      else {
+        // eslint-disable-next-line no-console
+        console.log('🔄 Retrying session restoration...')
+        // Retry once after a short delay
+        setTimeout(async () => {
+          try {
+            await user_store.get_user()
+            // eslint-disable-next-line no-console
+            console.log('✅ User session restored on retry')
+            await indexedDB_store.retrieveAndSetKeyPairs()
+          }
+          catch (retryError) {
+            console.error('❌ Failed to restore session after retry:', retryError)
+            user_store.logout()
+          }
+        }, 1000)
+      }
     }
   }
   else {
+    // eslint-disable-next-line no-console
     console.log('ℹ️ No user found in storage')
   }
 })
