@@ -11,6 +11,15 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // Ensure cookies are handled properly in production
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+})
+
+// Add request interceptor to ensure credentials are sent
+api.interceptors.request.use((config) => {
+  config.withCredentials = true
+  return config
 })
 
 export const useUserStore = defineStore('user', () => {
@@ -75,12 +84,18 @@ export const useUserStore = defineStore('user', () => {
     }
     catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401)
+        if (error.response?.status === 401) {
+          console.error('🔑 Authentication failed:', error.response?.data)
           logout()
-        else
+        }
+        else {
           throw new Error(error.response?.data)
+        }
       }
-      else { console.error(error) }
+      else {
+        console.error('🔑 Error fetching user:', error)
+        throw error
+      }
     }
   }
 
@@ -152,6 +167,18 @@ export const useUserStore = defineStore('user', () => {
     logout,
   }
 })
+
+// Add response interceptor to handle cookie-related errors
+api.interceptors.response.use(
+  response => response,
+  (error) => {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      console.error('🔑 Session expired or invalid:', error.response?.data)
+      useUserStore().logout()
+    }
+    return Promise.reject(error)
+  },
+)
 
 if (import.meta.hot)
   import.meta.hot.accept(acceptHMRUpdate(useUserStore as any, import.meta.hot))

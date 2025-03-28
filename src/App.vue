@@ -32,8 +32,14 @@ onMounted(async () => {
   preferredDark.value = darkQuery.matches
 
   if (user_store.user) {
-    await indexedDB_store.retrieveAndSetKeyPairs()
-    await user_store.get_user()
+    try {
+      await user_store.get_user()
+      await indexedDB_store.retrieveAndSetKeyPairs()
+    }
+    catch (error) {
+      console.error('🔑 Failed to restore authentication state:', error)
+      user_store.logout()
+    }
   }
 })
 
