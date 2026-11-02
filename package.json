@@ -19,6 +19,9 @@
     "sizecheck": "npx vite-bundle-visualizer"
   },
   "dependencies": {
+    "@noble/curves": "2.0.1",
+    "@noble/hashes": "2.0.1",
+    "@scure/bip39": "2.4.0",
     "@unhead/vue": "^1.7.4",
     "@unocss/reset": "^0.53.6",
     "@vueuse/core": "^10.5.0",
@@ -27,8 +30,8 @@
     "nprogress": "^0.2.0",
     "onu-ui": "1.0.14-beta.2",
     "pinia": "^2.1.6",
-    "random-words": "^2.0.0",
     "serve": "^14.2.1",
+    "ts-mls": "1.6.4",
     "vue": "^3.3.4",
     "vue-demi": "^0.14.6",
     "vue-i18n": "^9.5.0",

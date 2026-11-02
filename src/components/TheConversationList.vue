@@ -55,7 +55,9 @@ onMounted(() => {
         </o-button>
       </div>
       <div class="flex flex-col gap-2">
-        <o-button @click="conversation_store.get_all_new_messages"> Rafraichir </o-button>
+        <o-button :loading="conversation_store.syncing" @click="conversation_store.sync()">
+          Rafraichir
+        </o-button>
       </div>
     </div>
     <div

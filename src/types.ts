@@ -1,45 +1,83 @@
 import { type ViteSSGContext } from 'vite-ssg'
 
-export interface IUser {
+// Binary values coming from the API are base64 strings
+
+export interface IPublicUser {
   User_id: number
   User_name: string
-  User_email: string
-  User_password?: string
-  User_contact_uuid?: string
-  encryption_public_key?: Uint8Array
-  signing_public_key?: Uint8Array
-  contact_list?: IContact[]
+  identity_public_key: string | null
 }
 
 export interface IContact {
   Contact_id: number
-  User_id: number
   Contact_User_id: number
-  User: IUser
+  User: IPublicUser
 }
 
-export interface IConversation {
-  Conversation_id: number
-  Users: IUser[]
-  Demands?: boolean
-  Messages?: IMessage[]
-}
-
-export interface IUserConversation {
-  UserConversation_id: number
+export interface IDemand {
+  Contact_id: number
   User_id: number
-  Conversation_id: number
+  AddedBy: IPublicUser
+}
+
+export interface IUser extends IPublicUser {
+  User_email: string
+  User_contact_uuid: string
+  contact_list: IContact[]
+  demands: IDemand[]
+}
+
+export interface IDevice {
+  Device_id: string
+  User_id: number
+  Device_name: string
+  signature_public_key: string
+  certificate: string
+  createdAt: string
+}
+
+export interface IDirectoryEntry extends IPublicUser {
+  devices: IDevice[]
+}
+
+export interface IInboxMessage {
+  Message_id: number
+  Conversation_id: string
+  kind: 'commit' | 'welcome' | 'application'
+  epoch: number
+  payload: string
+  // Given by the server for routing only, never trusted
+  sender: { Device_id: string, User_id?: number }
+  KeyPackage_ref: string | null
+  createdAt: string
+}
+
+export interface IConversationMember {
+  User_id: number
+  User_name: string
+}
+
+// Local view of an MLS group this device belongs to
+export interface IConversation {
+  Conversation_id: string
+  // Other users of the conversation, read from the MLS ratchet tree
+  members: IConversationMember[]
+  // False once this device has been removed from the group
+  active: boolean
+  updatedAt: string
 }
 
 export interface IMessage {
-  Message_id: number
-  Conversation_id: number
+  id: string
+  Conversation_id: string
+  // Sender authenticated by MLS
   Sender_id: number
-  new?: boolean
-  Message_content?: Uint8Array
-  Message_content_decrypted?: string
-  Nonce?: Uint8Array
+  Sender_device_id: string
+  text: string
   createdAt: string
+  new?: boolean
+  // Set on a placeholder for a message this device could not decrypt
+  error?: string
 }
 
 export type UserModule = (ctx: ViteSSGContext) => void

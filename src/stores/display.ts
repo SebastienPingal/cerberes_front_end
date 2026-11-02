@@ -19,4 +19,4 @@ export const useDisplayStore = defineStore('displays', () => {
 })
 
 if (import.meta.hot)
-  import.meta.hot.accept(acceptHMRUpdate(useUserStore as any, import.meta.hot))
+  import.meta.hot.accept(acceptHMRUpdate(useDisplayStore, import.meta.hot))

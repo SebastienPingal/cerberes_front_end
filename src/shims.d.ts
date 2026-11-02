@@ -9,6 +9,11 @@ declare module '*.md' {
   export default component
 }
 
+// ts-mls exposes its internal modules through "exports", which "moduleResolution": "node" ignores
+declare module 'ts-mls/messageProtection.js' {
+  export { unprotectPrivateMessage } from 'ts-mls/dist/src/messageProtection.js'
+}
+
 declare module '*.vue' {
   import { type DefineComponent } from 'vue'
   const component: DefineComponent<{}, {}, any>

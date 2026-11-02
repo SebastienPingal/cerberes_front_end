@@ -2,22 +2,22 @@
 const conversation_store = useConversationStore()
 const message_container = ref<HTMLDivElement | null>(null)
 
-watch(() => conversation_store.selected_conversation?.Messages, async () => {
-  await nextTick()
+function scroll_to_bottom() {
   // Add a small delay before scrolling
   setTimeout(() => {
     if (message_container.value)
       message_container.value.scrollTop = message_container.value.scrollHeight
   }, 100)
+}
+
+watch(() => conversation_store.selected_messages.length, async () => {
+  await nextTick()
+  scroll_to_bottom()
 }, { immediate: true })
 
 onMounted(async () => {
   await nextTick()
-  // Add a small delay before scrolling
-  setTimeout(() => {
-    if (message_container.value)
-      message_container.value.scrollTop = message_container.value.scrollHeight
-  }, 100)
+  scroll_to_bottom()
 })
 </script>
 
@@ -25,22 +25,22 @@ onMounted(async () => {
   <div class="h-full flex flex-col overflow-hidden border rounded-md p-4">
     <div v-if="conversation_store.selected_conversation" class="h-full flex flex-col">
       <div
-        v-if="conversation_store.selected_conversation?.Messages" ref="message_container"
+        v-if="conversation_store.selected_messages.length" ref="message_container"
         class="mb-4 flex flex-col gap-4 overflow-auto" style="flex: 1"
       >
         <div class="flex flex-col gap-4 px-10">
           <TheMessage
-            v-for="message in conversation_store.selected_conversation.Messages" :key="message.Message_id"
+            v-for="message in conversation_store.selected_messages" :key="message.id"
             :message="message"
           />
         </div>
       </div>
-      <div v-else class="flex flex-col gap-2">
+      <div v-else class="flex flex-col gap-2" style="flex: 1">
         <div class="">
           No messages yet, start a conversation!
         </div>
       </div>
-      <TheInput class="w-full flex" />
+      <TheInput v-if="conversation_store.selected_conversation.active" class="w-full flex" />
     </div>
     <div v-else class="relative h-full w-full flex flex-col place-content-center items-center gap-2">
       <div class="z-10 w-fit rounded-xl bg-white p-8 text-xl dark:bg-dark-9">

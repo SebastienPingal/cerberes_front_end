@@ -6,7 +6,8 @@ const props = defineProps<{
 }>()
 
 const user_store = useUserStore()
-const is_user_sender = computed(() => props.message.Sender_id === user_store.user.User_id)
+const is_user_sender = computed(() => props.message.Sender_id === user_store.user?.User_id)
+const sender_name = computed(() => user_store.contact_name(props.message.Sender_id))
 
 function translate_to_relative_date(date: string) {
   const now = new Date()
@@ -26,14 +27,19 @@ function translate_to_relative_date(date: string) {
 </script>
 
 <template>
-  <div v-if="message.Message_content_decrypted" class="flex flex-col gap-1" :class="is_user_sender ? 'place-items-end' : 'place-items-start'">
+  <div class="flex flex-col gap-1" :class="is_user_sender ? 'place-items-end' : 'place-items-start'">
+    <div v-if="message.error" class="w-fit border border-red rounded-xl border-dashed px-4 py-1 text-sm text-red opacity-70">
+      {{ message.error }}
+    </div>
     <div
-      class="w-fit border rounded-tl-xl rounded-tr-xl border-dashed px-4 py-1"
+      v-else
+      class="w-fit whitespace-pre-wrap break-words border rounded-tl-xl rounded-tr-xl border-dashed px-4 py-1 text-left"
       :class="is_user_sender ? 'text-blue-300 border-blue-300 rounded-bl-xl' : 'border-yellow-200 text-yellow-200 rounded-br-xl'"
     >
-      {{ message.Message_content_decrypted }}
+      {{ message.text }}
     </div>
     <div class="flex px-5 text-xs">
+      <span v-if="!is_user_sender && sender_name" class="mr-1">{{ sender_name }} ·</span>
       {{ translate_to_relative_date(message.createdAt) }}
     </div>
   </div>

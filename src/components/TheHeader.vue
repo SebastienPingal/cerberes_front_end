@@ -6,6 +6,11 @@ const user = computed(() => user_store.user)
 function go_to_profile() {
   router.push('/profile')
 }
+
+async function logout() {
+  await user_store.logout()
+  router.push('/')
+}
 </script>
 
 <template>
@@ -17,7 +22,7 @@ function go_to_profile() {
       <o-button v-if="user" @click="go_to_profile">
         {{ user.User_name }}
       </o-button>
-      <o-button v-if="user" type="warning" light @click="user_store.logout">
+      <o-button v-if="user" type="warning" light @click="logout">
         Logout
       </o-button>
     </div>

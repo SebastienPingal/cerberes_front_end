@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import type { IContact } from '../types'
 
-const user_store = useUserStore()
-const user = computed(() => user_store.user)
 const display_store = useDisplayStore()
 const conversation_store = useConversationStore()
 const error_message = ref('')
+const creating = ref(false)
 
 async function create_conversation_with(contact: IContact) {
   error_message.value = ''
-  const foundContact = user.value.contact_list.find((c: IContact) => c.Contact_User_id === contact.Contact_User_id)
-  const member = [foundContact.User]
-  conversation_store.create_conversation(member)
-
-  display_store.conversation_creator = false
+  creating.value = true
+  try {
+    await conversation_store.create_conversation([contact.User])
+    display_store.conversation_creator = false
+  }
+  catch (error) {
+    error_message.value = (error as Error).message
+  }
+  creating.value = false
 }
 </script>
 
@@ -32,9 +35,12 @@ async function create_conversation_with(contact: IContact) {
     </div>
     <div class="flex flex-col gap-5">
       <h4 class="text-xl">
-        With who ?
+        Avec qui ?
       </h4>
-      <TheContactList @selectcontact="create_conversation_with" />
+      <div v-if="creating" class="opacity-50">
+        Création du groupe chiffré…
+      </div>
+      <TheContactList v-else @selectcontact="create_conversation_with" />
       <div v-if="error_message" class="text-red">
         {{ error_message }}
       </div>

@@ -16,15 +16,16 @@ declare module 'vue' {
     TheConversationCreator: typeof import('./components/TheConversationCreator.vue')['default']
     TheConversationList: typeof import('./components/TheConversationList.vue')['default']
     TheCounter: typeof import('./components/TheCounter.vue')['default']
+    TheDeviceSetup: typeof import('./components/TheDeviceSetup.vue')['default']
     TheDignifiedPlaceholder: typeof import('./components/TheDignifiedPlaceholder.vue')['default']
     TheFooter: typeof import('./components/TheFooter.vue')['default']
     TheHeader: typeof import('./components/TheHeader.vue')['default']
+    TheIdentityAlerts: typeof import('./components/TheIdentityAlerts.vue')['default']
     TheInput: typeof import('./components/TheInput.vue')['default']
-    TheKey: typeof import('./components/TheKey.vue')['default']
-    TheKeyGenerator: typeof import('./components/TheKeyGenerator.vue')['default']
     TheLogin: typeof import('./components/TheLogin.vue')['default']
     TheMessage: typeof import('./components/TheMessage.vue')['default']
     TheMessageList: typeof import('./components/TheMessageList.vue')['default']
     TheRegister: typeof import('./components/TheRegister.vue')['default']
+    TheSafetyNumber: typeof import('./components/TheSafetyNumber.vue')['default']
   }
 }
