@@ -7,7 +7,6 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    README: typeof import('./components/README.md')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TheContact: typeof import('./components/TheContact.vue')['default']
@@ -15,7 +14,6 @@ declare module 'vue' {
     TheConversation: typeof import('./components/TheConversation.vue')['default']
     TheConversationCreator: typeof import('./components/TheConversationCreator.vue')['default']
     TheConversationList: typeof import('./components/TheConversationList.vue')['default']
-    TheCounter: typeof import('./components/TheCounter.vue')['default']
     TheDeviceSetup: typeof import('./components/TheDeviceSetup.vue')['default']
     TheDignifiedPlaceholder: typeof import('./components/TheDignifiedPlaceholder.vue')['default']
     TheFooter: typeof import('./components/TheFooter.vue')['default']

@@ -16,11 +16,9 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "types": [
-      "vitest",
       "vite/client",
       "vue/ref-macros",
       "vite-plugin-pages/client",
-      "vite-plugin-vue-component-preview/client",
       "vite-plugin-vue-layouts/client",
       "vite-plugin-pwa/client",
       "unplugin-vue-macros/macros-global"
@@ -35,5 +33,5 @@
       "@vue-macros/volar/define-slots"
     ]
   },
-  "exclude": ["dist", "node_modules", "cypress"]
+  "exclude": ["dist", "node_modules"]
 }

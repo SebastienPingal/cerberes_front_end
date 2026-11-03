@@ -1,48 +1,61 @@
-![image of derperus](Cerberus.jpg)
+![Cerberes](src/assets/Cerberus.jpg)
 
 # Cerberes Front End
 
-## Description
+Cerberes is an end-to-end encrypted chat where users own their keys. This is its web client: every key is
+generated and kept in the browser, and messages are encrypted with [MLS (RFC 9420)](https://www.rfc-editor.org/rfc/rfc9420)
+before leaving it. The server ([cerberes_back_end](https://github.com/SebastienPingal/cerberes_back_end)) only
+relays encrypted messages and never sees a private key.
 
-Cerberes is a secure, encrypted chat application. It uses PGP encryption to ensure the privacy of user communications. The messages transit through a server and are then deleted from the server once they've been delivered and decrypted by the recipient.
+## How it works
 
-## Features
+- **Recovery phrase.** The first device of an account generates a 12 word BIP39 phrase. It gives the identity key of
+  the user and is never stored: it is only asked again to set up a new device.
+- **Devices.** Each device has its own MLS keys, certified by the identity key. A conversation is an MLS group of
+  devices: when a user adds a device, the members of their conversations add it automatically. New devices don't
+  get the older history.
+- **Contacts.** The identity key of a contact is remembered the first time it is seen. If the server later shows
+  another one, the app raises an alert and refuses it until the user accepts the change. Contacts can compare a
+  safety number to make sure nobody sits in between.
+- **Local storage.** Keys, group states and history live in IndexedDB, encrypted with a non-extractable WebCrypto
+  key. A device can be erased from its profile page.
 
-- PGP encryption for secure messages.
-- Messages are deleted from the server once delivered.
-- Users can generate and retrieve PGP keys using a mnemonic phrase.
+The protocol and its limits are described in [PROTOCOL.md](https://github.com/SebastienPingal/cerberes_back_end/blob/master/PROTOCOL.md).
+The code is in `src/crypto/` (identity, MLS, encrypted vault) and `src/stores/` (session, device, directory,
+conversations).
 
-## Tech Stack
+## Tech stack
 
-- TypeScript
-- Node.js
-- Express.js
-- Sequelize (ORM)
-- PostgreSQL
+Vue 3, Vite, Pinia, UnoCSS, [ts-mls](https://github.com/LukaJCB/ts-mls), [@scure/bip39](https://github.com/paulmillr/scure-bip39)
+and [@noble](https://github.com/paulmillr/noble-curves). Deployed on Vercel.
 
-## Getting Started
+## Running locally
 
-### Prerequisites
+Start the back end (see its README), then:
 
-- Node.js
-- PostgreSQL
+```bash
+pnpm install
+VITE_API_URL=http://localhost:3000 pnpm dev
+```
 
-### Installation
+The app is served on http://localhost:3333, which must be listed in the back end's `CORS_ORIGINS`.
 
-1. Clone the repository: `git clone https://github.com/SebastienPingal/cerberes_back_end.git`
-2. Navigate to the project directory: `cd cerberes_back_end`
-3. Install dependencies: `npm install`
-4. Create a `.env` file and add your environment variables.
-5. Run the application: `npm start`
+## Checks
 
-## Usage
+```bash
+pnpm lint
+pnpm typecheck
+pnpm build
+```
 
-Provide information about how to use your app. You may want to include API routes here.
+`e2e/mls-scenario.mjs` drives three browsers through the whole flow: identities, contacts, a conversation, a second
+device, a message refused with 409 then sent again, safety numbers and the identity change alert. Run it against a
+back end on an empty database:
 
-## Contributing
+```bash
+pnpm exec playwright install chromium
+```
 
-Please read `CONTRIBUTING.md` for details on our code of conduct, and the process for submitting pull requests to us.
-
-## License
-
-This project is licensed under the MIT License - see the `LICENSE.md` file for details.
+```bash
+E2E_DATABASE_URL=postgres://postgres:postgres@localhost:5432/cerberes pnpm test:e2e
+```
