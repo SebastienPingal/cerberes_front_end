@@ -33,7 +33,10 @@ function ask_confirmation() {
   step.value = 'confirm'
 }
 
+// Registering twice would create two devices: ignore clicks while an action runs
 async function run(action: () => Promise<void>) {
+  if (loading.value)
+    return
   loading.value = true
   try {
     await action()

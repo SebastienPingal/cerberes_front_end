@@ -7,6 +7,9 @@ const error_message = ref('')
 const creating = ref(false)
 
 async function create_conversation_with(contact: IContact) {
+  // onu-ui buttons can fire their click handler twice: never create two groups
+  if (creating.value)
+    return
   error_message.value = ''
   creating.value = true
   try {

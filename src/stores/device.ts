@@ -138,7 +138,19 @@ export const useDeviceStore = defineStore('device', () => {
     await replenish_key_packages()
   }
 
-  async function replenish_key_packages() {
+  // Concurrent calls (device load, sync maintenance) share one run, or both would publish a full batch
+  let replenishing: Promise<void> | null = null
+
+  function replenish_key_packages(): Promise<void> {
+    if (!replenishing) {
+      replenishing = publish_missing_key_packages().finally(() => {
+        replenishing = null
+      })
+    }
+    return replenishing
+  }
+
+  async function publish_missing_key_packages() {
     const this_device = device.value
     if (!this_device)
       return

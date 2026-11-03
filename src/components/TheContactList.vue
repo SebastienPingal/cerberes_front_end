@@ -10,8 +10,12 @@ const user = computed(() => user_store.user)
 const input_contact = ref('')
 const display_add_contact = ref(false)
 const verifying: Ref<IPublicUser | null> = ref(null)
+const adding = ref(false)
 
 async function add_contact() {
+  if (adding.value)
+    return
+  adding.value = true
   try {
     await user_store.add_contact(input_contact.value.trim())
     input_contact.value = ''
@@ -19,6 +23,7 @@ async function add_contact() {
   catch (error) {
     OMessage({ content: (error as Error).message, type: 'warning' })
   }
+  adding.value = false
 }
 </script>
 

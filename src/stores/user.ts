@@ -72,7 +72,7 @@ export const useUserStore = defineStore('user', () => {
 
   async function add_contact(contact_uuid: string) {
     try {
-      await api.post('/contacts', null, { params: { uuid: contact_uuid } })
+      await api.post('/contacts', {}, { params: { uuid: contact_uuid } })
       await get_user()
     }
     catch (error) {
