@@ -69,8 +69,8 @@ export function verify_device_certificate(identity_public_key: Uint8Array, User_
 // Number two users compare out of band (in person, on a call) to make sure the server
 // gave each of them the real identity key of the other. Same result on both sides.
 export function safety_number(
-  user_a: { User_id: number, identity_public_key: Uint8Array },
-  user_b: { User_id: number, identity_public_key: Uint8Array },
+  user_a: { User_id: number; identity_public_key: Uint8Array },
+  user_b: { User_id: number; identity_public_key: Uint8Array },
 ): string {
   const [first, second] = [user_a, user_b].sort((a, b) => a.User_id - b.User_id)
   const digest = sha256(encode_fields([

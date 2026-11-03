@@ -176,7 +176,7 @@ export const useConversationStore = defineStore('conversation', () => {
     const present = new Set(members.map(member => member.Device_id))
     const wanted_users = user_ids ?? [...new Set(members.map(member => member.User_id))]
 
-    const missing: { Device_id: string, User_id: number }[] = []
+    const missing: { Device_id: string; User_id: number }[] = []
     for (const User_id of wanted_users) {
       for (const certified of await directory_store.certified_devices(User_id)) {
         if (!present.has(certified.Device_id))
@@ -187,8 +187,8 @@ export const useConversationStore = defineStore('conversation', () => {
       return
 
     const { data } = await api.post('/key_packages/claim', { Device_ids: missing.map(item => item.Device_id) })
-    const added: { Device_id: string, KeyPackage_ref: string, key_package: KeyPackage }[] = []
-    for (const claimed of data as { Device_id: string, KeyPackage_ref: string, key_package: string }[]) {
+    const added: { Device_id: string; KeyPackage_ref: string; key_package: KeyPackage }[] = []
+    for (const claimed of data as { Device_id: string; KeyPackage_ref: string; key_package: string }[]) {
       const key_package = decode_key_package(from_base64(claimed.key_package))
       const owner = key_package_owner(key_package)
       const expected = missing.find(item => item.Device_id === claimed.Device_id)

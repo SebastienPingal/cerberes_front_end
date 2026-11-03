@@ -29,6 +29,7 @@ import {
   processPrivateMessage,
   zeroOutUint8Array,
 } from 'ts-mls'
+
 // Not part of the public API of ts-mls 1.x, see decrypt_application_message
 import { unprotectPrivateMessage } from 'ts-mls/messageProtection.js'
 import { from_base64, random_id, to_base64, utf8_decode, utf8_encode } from './encoding'
@@ -113,7 +114,7 @@ export function make_client_config(resolve_identity: IdentityResolver): ClientCo
   }
 }
 
-export async function generate_signature_key_pair(): Promise<{ publicKey: Uint8Array, signKey: Uint8Array }> {
+export async function generate_signature_key_pair(): Promise<{ publicKey: Uint8Array; signKey: Uint8Array }> {
   const cipher_suite = await get_cipher_suite()
   return cipher_suite.signature.keygen()
 }
@@ -253,8 +254,8 @@ export async function encrypt_application_message(state: ClientState, plaintext:
 }
 
 export type IncomingResult =
-  | { kind: 'state', new_state: ClientState, consumed: Uint8Array[] }
-  | { kind: 'application', new_state: ClientState, plaintext: Uint8Array, sender: DeviceCredential, consumed: Uint8Array[] }
+  | { kind: 'state'; new_state: ClientState; consumed: Uint8Array[] }
+  | { kind: 'application'; new_state: ClientState; plaintext: Uint8Array; sender: DeviceCredential; consumed: Uint8Array[] }
 
 export async function process_incoming_message(state: ClientState, bytes: Uint8Array): Promise<IncomingResult> {
   const decoded = decodeMlsMessage(bytes, 0)?.[0]

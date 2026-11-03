@@ -47,7 +47,7 @@ export interface IInboxMessage {
   epoch: number
   payload: string
   // Given by the server for routing only, never trusted
-  sender: { Device_id: string, User_id?: number }
+  sender: { Device_id: string; User_id?: number }
   KeyPackage_ref: string | null
   createdAt: string
 }

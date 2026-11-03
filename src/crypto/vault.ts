@@ -115,7 +115,7 @@ export async function vault_get<T>(record_id: string): Promise<T | undefined> {
   const database = await open_database()
   const record = await request_to_promise(
     database.transaction(RECORD_STORE, 'readonly').objectStore(RECORD_STORE).get(record_id),
-  ) as { iv: Uint8Array, ciphertext: Uint8Array } | undefined
+  ) as { iv: Uint8Array; ciphertext: Uint8Array } | undefined
   if (!record)
     return undefined
 

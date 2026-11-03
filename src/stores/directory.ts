@@ -28,7 +28,7 @@ export const useDirectoryStore = defineStore('directory', () => {
 
   const pinned: Ref<Record<number, PinnedIdentity>> = ref({})
   const changes: Ref<Record<number, IdentityChange>> = ref({})
-  const entries = new Map<number, { entry: IDirectoryEntry, fetched_at: number }>()
+  const entries = new Map<number, { entry: IDirectoryEntry; fetched_at: number }>()
 
   function record_id() {
     return `u${user_store.user?.User_id}:identities`

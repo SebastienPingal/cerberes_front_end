@@ -22,7 +22,7 @@ const verified = computed(() => directory_store.is_verified(props.contact.User_i
         Comparez ce code avec celui affiché chez {{ props.contact.User_name }}, en personne ou lors d'un appel.
         S'il est identique, personne, pas même le serveur, ne peut lire vos messages à sa place.
       </p>
-      <div class="border rounded-lg p-3 text-xl font-mono tracking-wider">
+      <div class="border rounded-lg p-3 text-xl tracking-wider font-mono">
         {{ number }}
       </div>
       <div v-if="verified" class="text-green">
